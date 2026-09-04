@@ -519,6 +519,12 @@ header{
 .newsletterForm button{
   border:0;background:transparent;color:var(--dark);font-size:9px;font-weight:700;letter-spacing:1.1px
 }
+.newsletterSignup{min-width:0}
+.newsletterConsent{margin:9px 0 0;color:var(--muted);font-size:6.8px;line-height:1.55;letter-spacing:.7px}
+.newsletterStatus{min-height:18px;margin:8px 0 0;font-size:8px;font-weight:700;letter-spacing:.8px;line-height:1.5;color:var(--muted)}
+.newsletterStatus.success{color:var(--dark)}
+.newsletterStatus.error{color:#a33}
+.newsletterForm button:disabled{opacity:.45;cursor:wait}
 footer{
   margin:0;background:var(--dark);color:var(--cream);border-radius:0;padding:62px 3.2% 34px;
   display:grid;grid-template-columns:1fr 1.35fr auto;gap:70px;align-items:start
@@ -778,9 +784,13 @@ footer a:hover{opacity:.55}
     <div class="eyebrow">CARNEVELE LETTERS</div>
     <h2>BE FIRST TO KNOW.</h2>
   </div>
-  <div class="newsletterForm">
-    <input type="email" placeholder="SEU E-MAIL" aria-label="Seu e-mail">
-    <button onclick="alert('Preview: newsletter será conectada na versão final.')">JOIN →</button>
+  <div class="newsletterSignup">
+    <form class="newsletterForm" id="newsletterForm">
+      <input id="newsletterEmail" type="email" placeholder="SEU E-MAIL" aria-label="Seu e-mail" autocomplete="email" required>
+      <button id="newsletterBtn" type="submit">JOIN →</button>
+    </form>
+    <p class="newsletterConsent">AO SE INSCREVER, VOCÊ CONCORDA EM RECEBER NOVIDADES DA CARNEVELE.</p>
+    <p class="newsletterStatus" id="newsletterStatus" role="status" aria-live="polite"></p>
   </div>
 </section>
 
@@ -972,6 +982,44 @@ footer a:hover{opacity:.55}
 const SUPABASE_URL='https://bbrdcgjkxkdsrrvmcfal.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_PEmMXKAQfDRLiSXirAd8Cw_1N24ov9E';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
+function setNewsletterStatus(message,type=''){
+  newsletterStatus.textContent=message;
+  newsletterStatus.className='newsletterStatus'+(type?' '+type:'');
+}
+async function subscribeNewsletter(email){
+  const normalized=(email||'').trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)){
+    setNewsletterStatus('DIGITE UM E-MAIL VÁLIDO.','error');
+    newsletterEmail.focus();
+    return false;
+  }
+  newsletterBtn.disabled=true;
+  newsletterBtn.textContent='JOINING…';
+  setNewsletterStatus('');
+  try{
+    const {error}=await supabaseClient
+      .from('newsletter_subscribers')
+      .insert({email:normalized,status:'active'});
+    if(error){
+      if(error.code==='23505'){
+        setNewsletterStatus("YOU'RE ALREADY ON THE LIST.",'success');
+        return true;
+      }
+      throw error;
+    }
+    newsletterEmail.value='';
+    setNewsletterStatus('WELCOME TO CARNEVELE LETTERS.','success');
+    return true;
+  }catch(err){
+    console.error('Newsletter:',err);
+    setNewsletterStatus('NÃO FOI POSSÍVEL ENTRAR NA LISTA. TENTE NOVAMENTE.','error');
+    return false;
+  }finally{
+    newsletterBtn.disabled=false;
+    newsletterBtn.textContent='JOIN →';
+  }
+}
 let accountUser=null;
 const accountRedirectUrl=()=>window.location.origin+window.location.pathname;
 
@@ -1291,6 +1339,11 @@ searchInput.addEventListener('keydown',(e)=>{
 searchBtn.onclick=openSearch;
 searchClose.onclick=()=>closeSearch();
 searchBackdrop.onclick=()=>closeSearch();
+
+newsletterForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  await subscribeNewsletter(newsletterEmail.value);
+});
 
 accountMenuBtn.onclick=openAccountPage;
 accountClose.onclick=()=>closeAccountPage();
