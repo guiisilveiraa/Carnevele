@@ -1210,6 +1210,78 @@ html,body{background:#fff!important}
   .right{gap:3px!important}
 }
 </style>
+
+<style id="carnevele-mobile-logo-fit-final">
+/* Ajuste final mobile: wordmark um pouco menor, inteira e sem recorte */
+@media(max-width:800px){
+  .wordmark{
+    width:146px!important;
+    height:49px!important;
+    overflow:visible!important;
+    position:relative!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    justify-self:center!important;
+  }
+  .wordmark img{
+    position:static!important;
+    width:142px!important;
+    height:auto!important;
+    max-width:142px!important;
+    max-height:28px!important;
+    object-fit:contain!important;
+    transform:none!important;
+    display:block!important;
+  }
+}
+@media(max-width:390px){
+  .wordmark{width:140px!important}
+  .wordmark img{width:136px!important;max-width:136px!important}
+}
+</style>
+
+<style id="carnevele-mobile-header-alignment-final">
+/* Mobile: espaçamento uniforme entre NEW DROP / SHOP / ABOUT e alinhamento vertical com BUSCAR / BAG */
+@media(max-width:800px){
+  header{padding-left:7px!important;padding-right:7px!important}
+  .leftHead{gap:3px!important;align-items:center!important;align-self:center!important;min-width:0!important}
+  .menu{margin-right:2px!important;align-self:center!important}
+  .nav{display:flex!important;align-items:center!important;gap:5px!important;margin-left:0!important;min-width:0!important}
+  .nav a{
+    display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+    width:34px!important;min-width:34px!important;min-height:28px!important;box-sizing:border-box!important;
+    padding:0!important;font-size:5.9px!important;letter-spacing:.62px!important;line-height:1.05!important;white-space:normal!important;
+  }
+  .nav a:first-child{width:39px!important;min-width:39px!important}
+  .right{display:flex!important;align-items:center!important;align-self:center!important;gap:7px!important;min-width:0!important}
+  .navbtn,.bag{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    min-height:28px!important;box-sizing:border-box!important;padding:0!important;
+    font-size:5.9px!important;letter-spacing:.62px!important;line-height:1!important;white-space:nowrap!important;
+  }
+  .count{font-size:5.9px!important;line-height:1!important;margin-left:2px!important}
+}
+@media(max-width:390px){
+  .nav{gap:4px!important}
+  .nav a{width:32px!important;min-width:32px!important;font-size:5.6px!important;letter-spacing:.52px!important}
+  .nav a:first-child{width:37px!important;min-width:37px!important}
+  .right{gap:6px!important}
+  .navbtn,.bag,.count{font-size:5.6px!important;letter-spacing:.52px!important}
+}
+</style>
+
+<style id="carnevele-mobile-header-optical-fix">
+/* Correção óptica: NEW DROP ocupa 2 linhas; SHOP/ABOUT precisam descer levemente para alinhar com BUSCAR/BAG */
+@media(max-width:800px){
+  .nav a:nth-child(2),.nav a:nth-child(3){transform:translateY(2.5px)!important;}
+  .right{transform:none!important;}
+  .navbtn,.bag{transform:none!important;}
+}
+@media(max-width:390px){
+  .nav a:nth-child(2),.nav a:nth-child(3){transform:translateY(2px)!important;}
+}
+</style>
 </head>
 <body>
 <div class="bar">FIRST INTENTIONS · DROP 01 / 2026 · BUILT WITH INTENTION · DESIGNED BY FRIENDS</div>
