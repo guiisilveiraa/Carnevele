@@ -1413,4 +1413,223 @@ function renderSearch(query=''){
     searchCount.textContent='';
     searchResults.innerHTML=`
       <div class="searchEmpty">
-        Tente <strong>“
+        Tente <strong>“Fol”</strong>, <strong>“Danger”</strong> ou <strong>“First Intentions”</strong>.
+      </div>`;
+    return;
+  }
+
+  const matches=matchingProducts(q);
+  const fromCollection=collectionMatches(q);
+
+  if(!matches.length){
+    searchCount.textContent='0 RESULTADOS';
+    searchResults.innerHTML=`
+      <div class="searchEmpty">
+        Nenhuma peça encontrada para <strong>“${query.replace(/[<>]/g,'')}”</strong>.<br>
+        Tente parte do nome da peça ou da coleção.
+      </div>`;
+    return;
+  }
+
+  searchCount.textContent=`${matches.length} ${matches.length===1?'RESULTADO':'RESULTADOS'}`;
+  const label=fromCollection
+    ? `<div class="searchCollectionLabel">FIRST INTENTIONS · ${matches.length} PEÇAS</div>`
+    : '';
+
+  searchResults.innerHTML=label+matches.map(({p,i})=>`
+    <button class="searchResult" onclick="openSearchProduct(${i})">
+      <img src="${p.images[p.color]}" alt="${p.name}">
+      <span>
+        <strong>${p.name}</strong>
+        <small>FIRST INTENTIONS · ${money(p.price)}</small>
+      </span>
+      <span class="arrow">→</span>
+    </button>
+  `).join('');
+}
+
+function openSearch(){
+  closeSideMenu(false);closeCart();closeAboutPage(false);closeDropPage(false);
+  searchBackdrop.classList.add('open');
+  searchTray.classList.add('open');
+  lockBody();
+  renderSearch(searchInput.value);
+  setTimeout(()=>searchInput.focus(),180);
+}
+
+function closeSearch(doUnlock=true){
+  searchTray.classList.remove('open');
+  searchBackdrop.classList.remove('open');
+  if(doUnlock) setTimeout(unlockBody,180);
+}
+
+function openSearchProduct(i){
+  closeSearch(false);
+  setTimeout(()=>openProduct(i),90);
+}
+
+
+// CHECKOUT MERCADO PAGO
+// Depois de publicar o backend no Vercel, troque APENAS a URL abaixo.
+const CHECKOUT_API_URL='https://SEU-PROJETO-VERCEL.vercel.app/api/checkout';
+
+function paymentNotice(message){
+  let el=document.getElementById('paymentNotice');
+  if(!el){
+    el=document.createElement('div');
+    el.id='paymentNotice';
+    el.className='paymentNotice';
+    document.body.appendChild(el);
+  }
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(window.__paymentNoticeTimer);
+  window.__paymentNoticeTimer=setTimeout(()=>el.classList.remove('show'),5200);
+}
+
+function showPaymentReturnStatus(){
+  const params=new URLSearchParams(window.location.search);
+  const status=params.get('payment');
+  if(!status) return;
+  const messages={
+    success:'PAGAMENTO APROVADO · OBRIGADO POR COMPRAR NA CARNEVELE.',
+    pending:'PAGAMENTO PENDENTE · A CONFIRMAÇÃO PODE LEVAR ALGUNS INSTANTES.',
+    failure:'PAGAMENTO NÃO CONCLUÍDO · VOCÊ PODE TENTAR NOVAMENTE.'
+  };
+  if(messages[status]) paymentNotice(messages[status]);
+  // Limpa somente o parâmetro visual da URL sem recarregar a página.
+  params.delete('payment');
+  const qs=params.toString();
+  history.replaceState({},'',location.pathname+(qs?'?'+qs:'')+location.hash);
+}
+
+async function startCheckout(){
+  if(!cart.length){paymentNotice('SUA BAG ESTÁ VAZIA.');return;}
+  if(CHECKOUT_API_URL.includes('SEU-PROJETO-VERCEL')){
+    paymentNotice('FALTA CONFIGURAR A URL DO CHECKOUT DO VERCEL.');
+    return;
+  }
+  const btn=document.getElementById('checkoutBtn');
+  if(btn){btn.disabled=true;btn.textContent='ABRINDO PAGAMENTO…';}
+  try{
+    const items=cart.map(item=>({id:item.id,color:item.color,size:item.size,quantity:1}));
+    const response=await fetch(CHECKOUT_API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok || !data.init_point) throw new Error(data.error||'Não foi possível iniciar o pagamento.');
+    window.location.href=data.init_point;
+  }catch(err){
+    console.error(err);
+    paymentNotice('NÃO FOI POSSÍVEL ABRIR O PAGAMENTO. TENTE NOVAMENTE.');
+    if(btn){btn.disabled=false;btn.textContent='GO TO CHECKOUT →';}
+  }
+}
+
+searchInput.addEventListener('input',(e)=>renderSearch(e.target.value));
+searchInput.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){
+    const matches=matchingProducts(searchInput.value);
+    if(matches.length===1){
+      e.preventDefault();
+      openSearchProduct(matches[0].i);
+    }
+  }
+});
+searchBtn.onclick=openSearch;
+searchClose.onclick=()=>closeSearch();
+searchBackdrop.onclick=()=>closeSearch();
+
+newsletterForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  await subscribeNewsletter(newsletterEmail.value);
+});
+
+emailNoticeClose.onclick=closeEmailNotice;
+emailNoticeAction.onclick=closeEmailNotice;
+emailNotice.addEventListener('click',(e)=>{if(e.target===emailNotice)closeEmailNotice()});
+accountMenuBtn.onclick=openAccountPage;
+accountClose.onclick=()=>closeAccountPage();
+showCreateAccount.onclick=()=>switchAccountForm('create');
+showLogin.onclick=()=>switchAccountForm('login');
+forgotPasswordBtn.onclick=async()=>{
+  try{await sendPasswordReset()}catch(err){console.error(err);showAccountStatus(err.message||'NÃO FOI POSSÍVEL ENVIAR O E-MAIL.',true)}
+};
+loginForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const btn=loginForm.querySelector('.accountSubmit');btn.disabled=true;btn.textContent='SIGNING IN...';
+  try{await signInAccount(loginEmail.value.trim(),loginPassword.value)}
+  catch(err){console.error(err);showAccountStatus(err.message||'E-MAIL OU SENHA INVÁLIDOS.',true)}
+  finally{btn.disabled=false;btn.textContent='SIGN IN →'}
+});
+createAccountForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(createPassword.value!==createPasswordConfirm.value){showAccountStatus('AS SENHAS NÃO COINCIDEM.',true);return;}
+  const btn=createAccountForm.querySelector('.accountSubmit');btn.disabled=true;btn.textContent='CREATING...';
+  try{await createAccount(createName.value.trim(),createEmail.value.trim(),createPassword.value)}
+  catch(err){console.error(err);showAccountStatus(err.message||'NÃO FOI POSSÍVEL CRIAR A CONTA.',true)}
+  finally{btn.disabled=false;btn.textContent='CREATE ACCOUNT →'}
+});
+updatePasswordForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(newPassword.value!==newPasswordConfirm.value){showAccountStatus('AS SENHAS NÃO COINCIDEM.',true);return;}
+  const btn=updatePasswordForm.querySelector('.accountSubmit');btn.disabled=true;btn.textContent='UPDATING...';
+  try{
+    const {data,error}=await supabaseClient.auth.updateUser({password:newPassword.value});
+    if(error) throw error;
+    updateAccountUI(data.user);
+    switchAccountForm('profile');
+    showAccountStatus('SENHA ATUALIZADA COM SUCESSO.');
+  }catch(err){console.error(err);showAccountStatus(err.message||'NÃO FOI POSSÍVEL ALTERAR A SENHA.',true)}
+  finally{btn.disabled=false;btn.textContent='UPDATE PASSWORD →'}
+});
+openOrdersBtn.onclick=async()=>{showAccountSubview('ordersView');try{await loadOrders()}catch(err){console.error(err);showInlineStatus(el('ordersStatus'),'NÃO FOI POSSÍVEL CARREGAR SEUS PEDIDOS.',true)}};
+openDetailsBtn.onclick=async()=>{showAccountSubview('detailsView');try{await loadProfile()}catch(err){console.error(err);showInlineStatus(el('detailsStatus'),'NÃO FOI POSSÍVEL CARREGAR SEUS DADOS.',true)}};
+openAddressesBtn.onclick=async()=>{showAccountSubview('addressesView');try{await loadAddresses()}catch(err){console.error(err);showInlineStatus(el('addressesStatus'),'NÃO FOI POSSÍVEL CARREGAR SEUS ENDEREÇOS.',true)}};
+document.querySelectorAll('[data-account-back]').forEach(btn=>btn.onclick=showAccountHome);
+el('backToAddressesBtn').onclick=()=>showAccountSubview('addressesView');
+el('cancelAddressBtn').onclick=()=>showAccountSubview('addressesView');
+el('addAddressBtn').onclick=()=>openAddressForm();
+el('addressZip').addEventListener('input',e=>e.target.value=formatCep(e.target.value));
+el('addressState').addEventListener('input',e=>e.target.value=e.target.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2));
+el('detailsForm').addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('.accountSubmit');btn.disabled=true;btn.textContent='SALVANDO...';try{await saveProfile()}catch(err){console.error(err);showInlineStatus(el('detailsStatus'),'NÃO FOI POSSÍVEL SALVAR SEUS DADOS.',true)}finally{btn.disabled=false;btn.textContent='SALVAR ALTERAÇÕES →'}});
+el('detailsPasswordBtn').onclick=async()=>{try{if(!accountUser?.email)return;const {error}=await supabaseClient.auth.resetPasswordForEmail(accountUser.email,{redirectTo:accountRedirectUrl()});if(error)throw error;showEmailNotice('reset',accountUser.email)}catch(err){console.error(err);showInlineStatus(el('detailsStatus'),'NÃO FOI POSSÍVEL ENVIAR O E-MAIL DE REDEFINIÇÃO.',true)}};
+el('addressForm').addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('.accountSubmit');btn.disabled=true;btn.textContent='SALVANDO...';try{await saveAddress()}catch(err){console.error(err);showInlineStatus(el('addressFormStatus'),'NÃO FOI POSSÍVEL SALVAR O ENDEREÇO.',true)}finally{btn.disabled=false;btn.textContent='SALVAR ENDEREÇO →'}});
+el('addressList').addEventListener('click',async e=>{const edit=e.target.closest('[data-edit-address]');const del=e.target.closest('[data-delete-address]');if(edit){const a=accountAddresses.find(x=>String(x.id)===edit.dataset.editAddress);if(a)openAddressForm(a)}if(del){try{await deleteAddress(del.dataset.deleteAddress)}catch(err){console.error(err);showInlineStatus(el('addressesStatus'),'NÃO FOI POSSÍVEL EXCLUIR O ENDEREÇO.',true)}}});
+
+logoutBtn.onclick=async()=>{
+  const {error}=await supabaseClient.auth.signOut();
+  if(error){showAccountStatus(error.message||'NÃO FOI POSSÍVEL SAIR.',true);return}
+  accountAddresses=[];updateAccountUI(null);switchAccountForm('login');showAccountStatus('VOCÊ SAIU DA SUA CONTA.');
+};
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+  updateAccountUI(session?.user||null);
+  if(event==='PASSWORD_RECOVERY'){
+    accountPage.classList.add('open');lockBody();switchAccountForm('recovery');
+    showAccountStatus('CRIE SUA NOVA SENHA.');
+  }else if(event==='SIGNED_IN' && accountPage.classList.contains('open') && !updatePasswordForm.classList.contains('active')){
+    switchAccountForm('profile');
+  }else if(event==='SIGNED_OUT' && accountPage.classList.contains('open')){
+    switchAccountForm('login');
+  }
+});
+
+bagBtn.onclick=openCart;
+scrim.onclick=closeCart;
+menuBtn.onclick=openSideMenu;
+navScrim.onclick=closeSideMenu;
+clothingToggle.onclick=toggleClothing;
+firstIntentionsMenu.onclick=openDropPage;
+newDropLink.onclick=(e)=>{e.preventDefault();openDropPage()};
+shopLink.onclick=(e)=>{e.preventDefault();goToShop()};
+aboutLink.onclick=(e)=>{e.preventDefault();openAboutPage()};
+heroDropLink.onclick=(e)=>{e.preventDefault();openDropPage()};
+heroIdeaLink.onclick=(e)=>{e.preventDefault();openAboutPage()};
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){closeSearch();closeSideMenu();closeAboutPage();closeDropPage();closeCart();closeModal();closeAccountPage()}
+});
+renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();initializeAccount();
+
+</script></body></html>
