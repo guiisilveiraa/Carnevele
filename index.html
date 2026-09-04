@@ -1282,6 +1282,72 @@ html,body{background:#fff!important}
   .nav a:nth-child(2),.nav a:nth-child(3){transform:translateY(2px)!important;}
 }
 </style>
+
+<style id="carnevele-mobile-header-rebuild">
+/* Mobile header rebuilt from scratch: clean two-row layout, no optical hacks. */
+@media (max-width:800px){
+  .bar{height:26px!important;padding:0 8px!important;font-size:6.4px!important;letter-spacing:1.25px!important;white-space:nowrap!important;overflow:hidden!important;text-align:center!important;}
+  header{
+    height:80px!important;min-height:80px!important;padding:0 14px 5px!important;
+    display:grid!important;grid-template-columns:1fr auto 1fr!important;grid-template-rows:50px 25px!important;
+    align-items:center!important;background:#fff!important;overflow:visible!important;
+  }
+  .leftHead{display:contents!important;height:auto!important;transform:none!important;}
+  .miniSticker{display:none!important;}
+  .menu{
+    grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;
+    display:grid!important;width:32px!important;height:32px!important;padding:7px!important;margin:0!important;transform:none!important;
+  }
+  .menu span{width:20px!important;height:1.5px!important;}
+  .wordmark{
+    grid-column:2!important;grid-row:1!important;justify-self:center!important;align-self:center!important;
+    width:auto!important;height:auto!important;overflow:visible!important;display:flex!important;align-items:center!important;
+    position:static!important;transform:none!important;
+  }
+  .wordmark img{
+    position:static!important;transform:none!important;width:154px!important;height:auto!important;max-width:42vw!important;max-height:32px!important;
+    object-fit:contain!important;display:block!important;background:transparent!important;
+  }
+  .right{
+    grid-column:3!important;grid-row:1!important;justify-self:end!important;align-self:center!important;
+    display:flex!important;align-items:center!important;gap:12px!important;height:auto!important;margin:0!important;transform:none!important;min-width:0!important;
+  }
+  .right .navbtn{display:block!important;}
+  .navbtn,.bag{
+    font-size:7px!important;line-height:1!important;letter-spacing:1px!important;font-weight:750!important;
+    padding:5px 0!important;margin:0!important;white-space:nowrap!important;transform:none!important;
+  }
+  .count{font-size:7px!important;line-height:1!important;margin-left:2px!important;}
+  .nav{
+    grid-column:1 / -1!important;grid-row:2!important;justify-self:center!important;align-self:center!important;
+    display:flex!important;position:static!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;min-width:0!important;margin:0!important;padding:0!important;gap:32px!important;
+    background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;transform:none!important;
+  }
+  .nav a,.nav a:first-child,.nav a:nth-child(2),.nav a:nth-child(3){
+    width:auto!important;min-width:0!important;height:auto!important;margin:0!important;padding:3px 0!important;
+    font-size:7.2px!important;line-height:1!important;letter-spacing:1.25px!important;font-weight:750!important;
+    white-space:nowrap!important;transform:none!important;text-align:center!important;
+  }
+  .nav a:after,.navbtn:after{bottom:0!important;}
+}
+@media (max-width:390px){
+  header{padding-left:10px!important;padding-right:10px!important;}
+  .wordmark img{width:142px!important;max-width:40vw!important;}
+  .right{gap:8px!important;}
+  .navbtn,.bag,.count{font-size:6.6px!important;letter-spacing:.8px!important;}
+  .nav{gap:26px!important;}
+  .nav a,.nav a:first-child,.nav a:nth-child(2),.nav a:nth-child(3){font-size:6.8px!important;letter-spacing:1.05px!important;}
+}
+@media (max-width:350px){
+  .wordmark img{width:130px!important;max-width:39vw!important;}
+  .right{gap:6px!important;}
+  .navbtn,.bag,.count{font-size:6.2px!important;letter-spacing:.65px!important;}
+  .nav{gap:20px!important;}
+  .nav a,.nav a:first-child,.nav a:nth-child(2),.nav a:nth-child(3){font-size:6.4px!important;letter-spacing:.9px!important;}
+}
+</style>
+
 </head>
 <body>
 <div class="bar">FIRST INTENTIONS · DROP 01 / 2026 · BUILT WITH INTENTION · DESIGNED BY FRIENDS</div>
