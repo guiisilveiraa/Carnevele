@@ -1,1 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CARNEVELE — Painel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#fff;--ink:#20211f;--gray:#5d5d5d;--muted:#8a8a85;--line:#deded9;--soft:#f6f6f3;--danger:#963d37;--ok:#395d48}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.topbar{height:28px;background:var(--gray);color:#fff;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+header{height:76px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 32px;position:sticky;top:0;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);z-index:10}.brand{font-family:Georgia,'Times New Roman',serif;font-size:36px;letter-spacing:-2px;color:var(--gray)}.headerSide{display:flex;align-items:center;gap:12px}.headerSide.right{justify-content:flex-end}.mini{border:0;background:transparent;padding:8px 0;font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--gray)}
+main{max-width:1380px;margin:0 auto;padding:42px 32px 70px}.eyebrow{font-size:8px;font-weight:700;letter-spacing:2.3px;color:var(--muted);text-transform:uppercase}.pageHead{display:flex;justify-content:space-between;gap:30px;align-items:flex-end;margin-bottom:36px}.pageHead h1{font-size:48px;letter-spacing:-3px;margin:8px 0 0;line-height:.95}.pageHead p{max-width:440px;margin:0;font-size:11px;line-height:1.7;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}.metric{border:1px solid var(--line);padding:20px;min-height:112px;background:#fff}.metric span{display:block;font-size:7px;font-weight:700;letter-spacing:1.9px;color:var(--muted);text-transform:uppercase}.metric strong{display:block;font-size:27px;letter-spacing:-1.3px;margin-top:22px}.metric small{display:block;font-size:8px;color:var(--muted);margin-top:5px}
+.tools{display:flex;gap:10px;margin-bottom:12px}.search{flex:1;border:1px solid var(--line);background:#fff;padding:13px 14px;font-size:10px;outline:none}.filter{border:1px solid var(--line);background:#fff;padding:0 12px;font-size:9px;color:var(--gray);min-width:160px}.refresh{border:1px solid var(--gray);background:var(--gray);color:#fff;padding:0 18px;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:12px;align-items:start}.panel{border:1px solid var(--line);background:#fff}.panelTitle{height:47px;border-bottom:1px solid var(--line);padding:0 15px;display:flex;align-items:center;justify-content:space-between;font-size:8px;font-weight:700;letter-spacing:1.7px;color:var(--gray);text-transform:uppercase}.orders{max-height:690px;overflow:auto}.orderRow{width:100%;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;padding:17px 16px;display:grid;grid-template-columns:1.2fr 1fr .7fr auto;gap:12px;align-items:center;color:inherit}.orderRow:hover,.orderRow.active{background:var(--soft)}.orderMain strong{display:block;font-size:11px;letter-spacing:.4px}.orderMain small,.orderCustomer small,.orderDate{font-size:8px;color:var(--muted);display:block;margin-top:5px}.orderCustomer{font-size:9px;min-width:0}.orderCustomer strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.orderTotal{font-size:11px;font-weight:700;text-align:right}.status{display:inline-block;border:1px solid var(--line);padding:5px 7px;font-size:6.8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}.status.paid,.status.preparing{border-color:#aebbb2;color:var(--ok)}.status.shipped,.status.delivered{border-color:#aab5bc;color:#425963}.status.cancelled{border-color:#c9aaa7;color:var(--danger)}
+.empty{padding:45px 20px;text-align:center;color:var(--muted);font-size:9px;line-height:1.8}.detail{min-height:520px}.detailInner{padding:22px}.detailHero{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:20px}.detailHero h2{font-size:25px;letter-spacing:-1.2px;margin:5px 0 7px}.detailTotal{text-align:right;font-size:22px;font-weight:700}.detailTotal small{display:block;font-size:7px;color:var(--muted);font-weight:400;letter-spacing:1.4px;margin-bottom:5px}.section{padding:20px 0;border-bottom:1px solid var(--line)}.section:last-child{border-bottom:0}.section h3{font-size:8px;letter-spacing:1.8px;margin:0 0 13px;color:var(--gray);text-transform:uppercase}.kv{display:grid;grid-template-columns:130px 1fr;gap:8px 15px;font-size:9px;line-height:1.5}.kv span:nth-child(odd){color:var(--muted)}.address{font-size:10px;line-height:1.7}.item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 0;border-top:1px solid #ededeb}.item:first-of-type{border-top:0}.item strong{display:block;font-size:10px}.item small{display:block;font-size:8px;color:var(--muted);margin-top:4px}.itemPrice{font-size:10px;font-weight:700;text-align:right}.actions{display:flex;flex-wrap:wrap;gap:7px}.action{border:1px solid var(--line);background:#fff;color:var(--gray);padding:9px 10px;font-size:7px;font-weight:700;letter-spacing:1px;text-transform:uppercase}.action:hover{border-color:var(--gray)}.action.danger{color:var(--danger)}
+.loginWrap{min-height:calc(100vh - 104px);display:grid;place-items:center;padding:30px}.login{width:min(470px,100%);border:1px solid var(--line);padding:36px}.login .brandLogin{font-family:Georgia,'Times New Roman',serif;font-size:42px;color:var(--gray);margin-bottom:30px}.login h1{font-size:28px;letter-spacing:-1.4px;margin:6px 0 7px}.login p{font-size:9px;color:var(--muted);line-height:1.7;margin:0 0 24px}.field{display:block;margin-top:14px}.field span{display:block;font-size:7px;letter-spacing:1.5px;font-weight:700;color:var(--muted);margin-bottom:7px}.field input{width:100%;border:1px solid var(--line);padding:13px;background:#fff;outline:none}.loginBtn{width:100%;border:0;background:var(--gray);color:#fff;padding:14px;margin-top:17px;font-size:8px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase}.message{font-size:9px;margin-top:14px;line-height:1.6;color:var(--muted)}.message.error{color:var(--danger)}
+.toast{position:fixed;right:18px;bottom:18px;max-width:360px;padding:13px 15px;background:var(--ink);color:#fff;font-size:9px;line-height:1.5;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+@media(max-width:900px){header{height:64px;padding:0 16px}.brand{font-size:28px}.headerSide .backStore{display:none}main{padding:28px 12px 60px}.pageHead{display:block}.pageHead h1{font-size:39px}.pageHead p{margin-top:14px}.cards{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}.orders{max-height:none}.detail{min-height:0}.tools{flex-wrap:wrap}.search{flex-basis:100%}.filter{flex:1}.orderRow{grid-template-columns:1fr auto}.orderCustomer,.orderDate{display:none}.detailHero{display:block}.detailTotal{text-align:left;margin-top:15px}.kv{grid-template-columns:110px 1fr}}
+@media(max-width:480px){.topbar{font-size:6px;letter-spacing:1.2px}.brand{font-size:24px}.mini{font-size:7px}.cards{gap:6px}.metric{padding:14px;min-height:95px}.metric strong{font-size:21px}.orderRow{padding:14px 12px}.login{padding:26px 20px}}
+</style>
+</head>
+<body>
+<div class="topbar">CARNEVELE · PAINEL ADMINISTRATIVO · ACESSO RESTRITO</div>
 
+<div id="loginScreen" class="loginWrap">
+  <form class="login" id="loginForm">
+    <div class="brandLogin">CARNEVELE</div>
+    <div class="eyebrow">ÁREA RESTRITA</div>
+    <h1>PAINEL DA MARCA.</h1>
+    <p>Entre com a conta administrativa da CARNEVELE. Mesmo que alguém descubra esta página, os pedidos continuam protegidos pelo RLS do Supabase.</p>
+    <label class="field"><span>E-MAIL</span><input id="email" type="email" autocomplete="email" required></label>
+    <label class="field"><span>SENHA</span><input id="password" type="password" autocomplete="current-password" required></label>
+    <button class="loginBtn" type="submit">ENTRAR NO PAINEL →</button>
+    <div class="message" id="loginMessage"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+<header>
+  <div class="headerSide"><button class="mini backStore" onclick="location.href='./'">← VOLTAR À LOJA</button></div>
+  <div class="brand">CARNEVELE</div>
+  <div class="headerSide right"><span class="mini" id="adminEmail"></span><button class="mini" id="logoutBtn">SAIR</button></div>
+</header>
+<main>
+  <div class="pageHead">
+    <div><div class="eyebrow">CARNEVELE / OPERAÇÕES</div><h1>PEDIDOS.</h1></div>
+    <p>Consulte cliente, itens e o endereço usado em cada compra. O endereço exibido aqui é a cópia salva no pedido, portanto não muda se o cliente editar seus endereços depois.</p>
+  </div>
+
+  <section class="cards">
+    <div class="metric"><span>Pedidos</span><strong id="mOrders">0</strong><small>total registrado</small></div>
+    <div class="metric"><span>Faturamento aprovado</span><strong id="mRevenue">R$ 0,00</strong><small>não inclui pendentes/cancelados</small></div>
+    <div class="metric"><span>Preparando</span><strong id="mPreparing">0</strong><small>pedidos em separação</small></div>
+    <div class="metric"><span>Enviados</span><strong id="mShipped">0</strong><small>a caminho do cliente</small></div>
+  </section>
+
+  <div class="tools">
+    <input class="search" id="search" placeholder="BUSCAR POR PEDIDO, CLIENTE OU E-MAIL">
+    <select class="filter" id="statusFilter">
+      <option value="all">TODOS OS STATUS</option>
+      <option value="pending">PAGAMENTO PENDENTE</option>
+      <option value="paid">PAGAMENTO APROVADO</option>
+      <option value="preparing">PREPARANDO PEDIDO</option>
+      <option value="shipped">ENVIADO</option>
+      <option value="delivered">ENTREGUE</option>
+      <option value="cancelled">CANCELADO</option>
+    </select>
+    <button class="refresh" id="refreshBtn">ATUALIZAR</button>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panelTitle"><span>Lista de pedidos</span><span id="resultCount">0 PEDIDOS</span></div>
+      <div class="orders" id="ordersList"><div class="empty">CARREGANDO PEDIDOS…</div></div>
+    </section>
+    <aside class="panel detail" id="detail"><div class="empty">SELECIONE UM PEDIDO PARA VER OS DETALHES.</div></aside>
+  </div>
+</main>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://bbrdcgjkxkdsrrvmcfal.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_PEmMXKAQfDRLiSXirAd8Cw_1N24ov9E';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+let orders=[];let currentId=null;
+const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const date=s=>s?new Date(s).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—';
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const statusLabel=s=>({pending:'PAGAMENTO PENDENTE',paid:'PAGAMENTO APROVADO',preparing:'PREPARANDO PEDIDO',shipped:'ENVIADO',delivered:'ENTREGUE',cancelled:'CANCELADO'}[s]||String(s||'').toUpperCase());
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.add('hidden'),3200)}
+function loginMessage(msg,error=false){$('loginMessage').textContent=msg;$('loginMessage').className='message'+(error?' error':'')}
+async function checkAdmin(){const {data,error}=await sb.rpc('is_admin');if(error)throw error;return data===true}
+async function enterApp(user){const ok=await checkAdmin();if(!ok){await sb.auth.signOut();$('app').classList.add('hidden');$('loginScreen').classList.remove('hidden');loginMessage('Esta conta não possui acesso administrativo.',true);return false}$('adminEmail').textContent=user.email||'ADMIN';$('loginScreen').classList.add('hidden');$('app').classList.remove('hidden');await loadOrders();return true}
+async function bootstrap(){const {data:{session}}=await sb.auth.getSession();if(session?.user){try{await enterApp(session.user)}catch(e){console.error(e);loginMessage('O painel administrativo ainda não foi configurado no Supabase.',true)}}}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();loginMessage('ENTRANDO…');const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await enterApp(data.user)}catch(err){console.error(err);loginMessage(err.message||'Não foi possível entrar.',true)}finally{btn.disabled=false}});
+$('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload()};
+$('refreshBtn').onclick=()=>loadOrders();$('search').addEventListener('input',renderOrders);$('statusFilter').addEventListener('change',renderOrders);
+function normalizedAddress(raw){if(!raw)return null;if(typeof raw==='string'){try{return JSON.parse(raw)}catch{return null}}return raw}
+function addressHtml(raw){const a=normalizedAddress(raw);if(!a)return '<span style="color:var(--muted)">Endereço ainda não registrado neste pedido.</span>';const rec=a.recipient_name||a.recipientName||a.name||'';const zip=a.zip_code||a.zipCode||a.cep||'';const street=a.street||a.rua||'';const number=a.number||a.numero||'';const comp=a.complement||a.complemento||'';const neigh=a.neighborhood||a.bairro||'';const city=a.city||a.cidade||'';const state=a.state||a.estado||'';return `${rec?'<strong>'+esc(rec)+'</strong><br>':''}${esc(street)}${number?', '+esc(number):''}${comp?' · '+esc(comp):''}<br>${esc(neigh)}${neigh&&city?' · ':''}${esc(city)}${state?' / '+esc(state):''}${zip?'<br>CEP '+esc(zip):''}`}
+async function loadOrders(){
+  $('ordersList').innerHTML='<div class="empty">CARREGANDO PEDIDOS…</div>';
+  const {data,error}=await sb.from('orders').select('id,order_number,status,total,mercado_pago_payment_id,shipping_address,customer_name,customer_email,customer_phone,created_at,updated_at,order_items(id,product_id,product_name,color,size,quantity,unit_price)').order('created_at',{ascending:false});
+  if(error){console.error(error);$('ordersList').innerHTML='<div class="empty">NÃO FOI POSSÍVEL CARREGAR OS PEDIDOS.</div>';toast(error.message);return}
+  orders=data||[];updateMetrics();renderOrders();if(currentId){const still=orders.find(o=>o.id===currentId);if(still)renderDetail(still);else{$('detail').innerHTML='<div class="empty">SELECIONE UM PEDIDO PARA VER OS DETALHES.</div>';currentId=null}}
+}
+function updateMetrics(){const approved=orders.filter(o=>['paid','preparing','shipped','delivered'].includes(o.status));$('mOrders').textContent=orders.length;$('mRevenue').textContent=money(approved.reduce((s,o)=>s+Number(o.total||0),0));$('mPreparing').textContent=orders.filter(o=>o.status==='preparing').length;$('mShipped').textContent=orders.filter(o=>o.status==='shipped').length}
+function filtered(){const q=$('search').value.trim().toLowerCase();const s=$('statusFilter').value;return orders.filter(o=>{const hay=[o.order_number,o.customer_name,o.customer_email,o.mercado_pago_payment_id].join(' ').toLowerCase();return(!q||hay.includes(q))&&(s==='all'||o.status===s)})}
+function renderOrders(){const list=filtered();$('resultCount').textContent=`${list.length} ${list.length===1?'PEDIDO':'PEDIDOS'}`;if(!list.length){$('ordersList').innerHTML='<div class="empty">NENHUM PEDIDO ENCONTRADO.</div>';return}$('ordersList').innerHTML=list.map(o=>`<button class="orderRow ${o.id===currentId?'active':''}" data-id="${o.id}"><div class="orderMain"><strong>${esc(o.order_number||'#'+o.id.slice(0,8).toUpperCase())}</strong><small>${esc(date(o.created_at))}</small></div><div class="orderCustomer"><strong>${esc(o.customer_name||o.customer_email||'Cliente')}</strong><small>${esc(o.customer_email||'')}</small></div><span class="status ${esc(o.status)}">${esc(statusLabel(o.status))}</span><div class="orderTotal">${money(o.total)}</div></button>`).join('');document.querySelectorAll('.orderRow').forEach(b=>b.onclick=()=>{currentId=b.dataset.id;renderOrders();renderDetail(orders.find(o=>o.id===currentId))})}
+function renderDetail(o){if(!o)return;const items=o.order_items||[];$('detail').innerHTML=`<div class="panelTitle"><span>Detalhes do pedido</span><span>${esc(date(o.updated_at))}</span></div><div class="detailInner"><div class="detailHero"><div><div class="eyebrow">PEDIDO</div><h2>${esc(o.order_number||'#'+o.id.slice(0,8).toUpperCase())}</h2><span class="status ${esc(o.status)}">${esc(statusLabel(o.status))}</span></div><div class="detailTotal"><small>TOTAL</small>${money(o.total)}</div></div><section class="section"><h3>Cliente</h3><div class="kv"><span>Nome</span><strong>${esc(o.customer_name||'—')}</strong><span>E-mail</span><strong>${esc(o.customer_email||'—')}</strong><span>Telefone</span><strong>${esc(o.customer_phone||'—')}</strong></div></section><section class="section"><h3>Endereço de entrega</h3><div class="address">${addressHtml(o.shipping_address)}</div></section><section class="section"><h3>Itens</h3>${items.length?items.map(i=>`<div class="item"><div><strong>${esc(i.product_name)}</strong><small>${esc(i.color||'')} ${i.color&&i.size?'·':''} ${esc(i.size||'')} · Qtd. ${Number(i.quantity||0)}</small></div><div class="itemPrice">${money(Number(i.unit_price||0)*Number(i.quantity||0))}</div></div>`).join(''):'<div class="address" style="color:var(--muted)">Nenhum item registrado.</div>'}</section><section class="section"><h3>Pagamento</h3><div class="kv"><span>Status</span><strong>${esc(statusLabel(o.status))}</strong><span>Mercado Pago</span><strong>${esc(o.mercado_pago_payment_id||'—')}</strong><span>Criado em</span><strong>${esc(date(o.created_at))}</strong></div></section><section class="section"><h3>Atualizar andamento</h3><div class="actions">${['paid','preparing'].includes(o.status)?'<button class="action" data-status="preparing">PREPARANDO</button>':''}${['paid','preparing','shipped'].includes(o.status)?'<button class="action" data-status="shipped">MARCAR COMO ENVIADO</button>':''}${['paid','preparing','shipped','delivered'].includes(o.status)?'<button class="action" data-status="delivered">ENTREGUE</button>':''}${o.status!=='cancelled'&&o.status!=='delivered'?'<button class="action danger" data-status="cancelled">CANCELAR PEDIDO</button>':''}</div></section></div>`;document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>setStatus(o.id,b.dataset.status))}
+async function setStatus(id,status){if(!confirm(`Alterar o pedido para "${statusLabel(status)}"?`))return;const {error}=await sb.rpc('admin_set_order_status',{p_order_id:id,p_status:status});if(error){console.error(error);toast(error.message);return}toast('STATUS ATUALIZADO.');await loadOrders()}
+bootstrap();
+</script>
+</body>
+</html>
