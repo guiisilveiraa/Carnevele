@@ -1681,10 +1681,10 @@ body>.bar,body>header,body>.cvMobileHeader,body>.hero,body>.ticker,body>.shop,bo
 
 /* HERO */
 #cv2Home{display:block}
-#cv2Hero{position:relative;min-height:100svh;padding-top:var(--cv2-header-h);overflow:hidden;background:radial-gradient(ellipse at 50% 20%,#fff 0 48%,#fbfaf7 74%,#eee9df 100%)}
-.cv2HeroTop{position:absolute;left:0;right:0;top:var(--cv2-header-h);height:42%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px}
-.cv2HeroMeta{position:absolute;right:24px;top:26px;text-align:right;font:600 8px/1.5 Arial,sans-serif;letter-spacing:.12em;color:#75756f;text-transform:uppercase}
-.cv2HeroBanner{position:absolute;left:0;right:0;bottom:0;height:58%;background-image:linear-gradient(90deg,rgba(0,0,0,.06),rgba(0,0,0,0) 55%),var(--cv2-banner);background-size:cover;background-position:center 51%;background-attachment:fixed;border-top:1px solid rgba(17,18,16,.12)}
+#cv2Hero{position:relative;min-height:100svh;height:100svh;overflow:hidden;background:#f3f3f1}
+.cv2HeroTop{position:absolute;left:0;right:0;top:0;bottom:0;display:block;pointer-events:none;z-index:2}
+.cv2HeroMeta{position:absolute;right:24px;top:calc(var(--cv2-header-h) + 18px);text-align:right;font:600 8px/1.5 Arial,sans-serif;letter-spacing:.12em;color:#fff;text-transform:uppercase;text-shadow:0 1px 12px rgba(0,0,0,.28)}
+.cv2HeroBanner{position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(0,0,0,.14),rgba(0,0,0,.03) 55%,rgba(0,0,0,.08)),var(--cv2-banner);background-size:cover;background-position:center 51%;background-attachment:fixed}
 .cv2HeroCaption{position:absolute;left:3.2vw;bottom:4.2vh;z-index:3;color:#fff;max-width:420px;text-shadow:0 1px 15px rgba(0,0,0,.32)}
 .cv2HeroCaption .kicker{font:700 clamp(12px,1.2vw,17px)/1 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
 .cv2HeroCaption h1{font:700 clamp(30px,4.1vw,68px)/.9 Arial,sans-serif;letter-spacing:-.055em;margin:0 0 18px;text-transform:uppercase}
@@ -1741,7 +1741,7 @@ body>.bar,body>header,body>.cvMobileHeader,body>.hero,body>.ticker,body>.shop,bo
   #cv2Header{grid-template-columns:1fr 70px 1fr;padding:0 10px;height:56px}.cv2HeaderLeft{gap:5px}.cv2HeaderLeft .cv2HdrBtn{display:none}.cv2HeaderRight{gap:5px}.cv2HeaderRight .cv2AccountHdr{display:none}.cv2HdrBtn{font-size:7px;letter-spacing:.08em}.cv2SearchHdr{font-size:0;width:30px;height:30px;position:relative}.cv2SearchHdr:after{content:"⌕";font-size:17px;position:absolute;inset:0;display:grid;place-items:center}.cv2BagBtn{font-size:7px}.cv2MenuBtn{width:32px;height:32px}
   #cv2MorphLogo{width:170px;max-width:44vw;top:calc(var(--cv2-header-h) + 8vh)}
   .cv2IntroScene{width:min(52vw,220px)}.cv2IntroCenter{gap:16px}.cv2IntroLink{font-size:10px;padding:6px 8px}.cv2IntroFoot{bottom:22px}.cv2IntroHint{display:none}
-  #cv2Hero{min-height:100svh}.cv2HeroTop{height:39%}.cv2HeroMeta{top:20px;right:14px;font-size:6px}.cv2HeroBanner{height:61%;background-attachment:scroll;background-position:46% 58%}.cv2HeroCaption{left:17px;bottom:24px;max-width:76vw}.cv2HeroCaption .kicker{font-size:9px}.cv2HeroCaption h1{font-size:37px}.cv2OutlineBtn{font-size:8px;padding:10px 12px}.cv2ScrollMark{display:none}
+  #cv2Hero{min-height:100svh;height:100svh}.cv2HeroTop{inset:0}.cv2HeroMeta{top:calc(var(--cv2-header-h) + 14px);right:14px;font-size:6px;color:#fff}.cv2HeroBanner{inset:0;background-attachment:scroll;background-position:46% 58%}.cv2HeroCaption{left:17px;right:17px;bottom:24px;max-width:76vw}.cv2HeroCaption .kicker{font-size:9px}.cv2HeroCaption h1{font-size:37px}.cv2OutlineBtn{font-size:8px;padding:10px 12px}.cv2ScrollMark{display:none}
   #cv2Collection{padding:78px 14px 90px}.cv2SectionLabel{margin-bottom:36px}.cv2CollectionGrid{grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}.cv2ProductMedia{aspect-ratio:.73/1}.cv2ProductMedia img{width:122%;height:122%}.cv2CardMeta{display:block}.cv2CardMeta strong{display:block;margin-top:5px}.cv2CampaignNote{grid-column:1/-1;grid-row:2;min-height:290px;margin:12px 0;padding:32px 24px}.cv2CollectionGrid .cv2ProductCard:nth-child(4),.cv2CollectionGrid .cv2ProductCard:nth-child(5){grid-row:3}.cv2HoverCursor{display:none}
   .cv2ManifestPanel{min-height:auto;padding:68px 24px 80px;grid-template-columns:1fr;gap:38px}.cv2ManifestBig{font-size:clamp(45px,14vw,72px)}.cv2ManifestCopy{font-size:11px}
   #cv2Contact{padding:42px 18px 34px}.cv2ContactGrid{grid-template-columns:1fr;gap:35px}.cv2Contact h2{font-size:52px}.cv2Footer{grid-template-columns:1fr;gap:28px;padding:24px 18px 30px}.cv2FooterCopy{text-align:left}.cv2FooterCols{max-width:320px}
@@ -1763,8 +1763,8 @@ body>.bar,body>header,body>.cvMobileHeader,body>.hero,body>.ticker,body>.shop,bo
 .cv2ModelLoad{height:17px;margin-top:-9px;display:flex;align-items:center;gap:9px;opacity:.55;transition:opacity .4s ease;font:600 7px/1 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#666;min-width:146px;justify-content:center}
 .cv2ModelLoad i{display:block;position:relative;width:44px;height:1px;background:rgba(17,17,17,.15);overflow:hidden}.cv2ModelLoad b{display:block;width:4%;height:100%;background:#111;transition:width .16s linear}
 .cv2ModelLoad.ready{opacity:0;pointer-events:none}.cv2ModelLoad.failed{opacity:.45}.cv2ModelLoad.failed i{display:none}
-#cv2Morph3D{position:fixed;z-index:67;left:50%;top:calc(var(--cv2-header-h) + 9vh);width:230px;aspect-ratio:1.12/1;pointer-events:none;transform:translateX(-50%);transform-origin:center top;will-change:top,width,opacity,transform;opacity:0;mix-blend-mode:multiply}
-#cv2Morph3D canvas{display:block;width:100%!important;height:100%!important;filter:drop-shadow(0 8px 12px rgba(0,0,0,.06))}
+#cv2Morph3D{position:fixed;z-index:67;left:50%;top:calc(var(--cv2-header-h) + 9vh);width:230px;aspect-ratio:1.12/1;pointer-events:none;transform:translateX(-50%);transform-origin:center top;will-change:top,width,opacity,transform;opacity:0;background:transparent}
+#cv2Morph3D canvas{display:block;width:100%!important;height:100%!important;background:transparent!important;filter:drop-shadow(0 10px 14px rgba(0,0,0,.10))}
 body.cv2Home3DReady #cv2Morph3D{opacity:1}
 body.cv2Home3DReady #cv2MorphLogo{opacity:0!important;visibility:hidden}
 #cv2TransitionCurtain{background:#0d0e0d}
@@ -1773,6 +1773,14 @@ body.cv2Home3DReady #cv2MorphLogo{opacity:0!important;visibility:hidden}
 @media(prefers-reduced-motion:reduce){.cv2ModelLoad b{transition:none}}
 </style>
 
+
+<style id="carnevele-v10-3d-only-intro">
+/* V10 — 3D exists only in the pre-page. Home/header use the flat transparent symbol. */
+#cv2Morph3D{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+body.cv2Home3DReady #cv2Morph3D{display:none!important;opacity:0!important;visibility:hidden!important}
+body.cv2Home3DReady #cv2MorphLogo{opacity:1!important;visibility:visible!important}
+#cv2MorphLogo{background:transparent!important}
+</style>
 <link rel="preload" href="./carnevele-logo.glb" as="fetch" crossorigin>
 </head>
 <body>
@@ -2976,7 +2984,8 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
 
   function revealSite(target='home'){
     site.setAttribute('aria-hidden','false');site.style.visibility='visible';
-    if(window.cv3d?.ready)window.cv3d.attachHome?.();
+    document.body.classList.remove('cv2Home3DReady');
+    window.cv3d?.park?.();
     intro.style.display='none';setBodyIntro(false);
     productMode=false;home.style.display='block';productView.style.display='none';morph.style.opacity='1';
     if(target==='contact')requestAnimationFrame(()=>q('#cv2Contact').scrollIntoView({block:'start'}));else window.scrollTo(0,0);
@@ -3022,7 +3031,8 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
     const startTop=hh+innerHeight*.075,startW=mobile?150:210,targetW=mobile?30:38,targetTop=(hh-targetW)/2;
     let p=productMode?1:Math.min(1,Math.max(0,scrollY/(mobile?270:390)));
     const ease=1-Math.pow(1-p,3),top=startTop+(targetTop-startTop)*ease,w=startW+(targetW-startW)*ease;
-    for(const el of [morph,morph3d])if(el){el.style.top=top+'px';el.style.width=w+'px';el.style.maxWidth='none';el.style.transform='translateX(-50%)'}
+    if(morph){morph.style.top=top+'px';morph.style.width=w+'px';morph.style.maxWidth='none';morph.style.transform='translateX(-50%)'}
+    if(morph3d){morph3d.style.display='none';morph3d.style.opacity='0'}
     morph.style.opacity='1';window.cv3d?.setHomeMorph?.(ease,w);
   }
   addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;updateMorph()})},{passive:true});addEventListener('resize',()=>updateMorph(true));
@@ -3052,7 +3062,7 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
     qa('[data-cv2-swatch]').forEach(b=>b.classList.toggle('active',b.dataset.cv2Swatch===productState.color));qa('.cv2Size').forEach(b=>b.classList.toggle('active',b.textContent===productState.size));
   }
   function openProductV5(i,color){
-    productState={index:Number(i)||0,color:color||products[Number(i)||0].color||'white',size:'M'};productMode=true;home.style.display='none';productView.style.display='block';morph.style.opacity='1';renderProductView();scrollTo(0,0);updateMorph(true);safeHistory(`#product=${products[productState.index].id}&color=${productState.color}`);
+    productState={index:Number(i)||0,color:color||products[Number(i)||0].color||'white',size:'M'};productMode=true;home.style.display='none';productView.style.display='block';document.body.classList.remove('cv2Home3DReady');morph.style.opacity='1';morph.style.visibility='visible';renderProductView();scrollTo(0,0);updateMorph(true);safeHistory(`#product=${products[productState.index].id}&color=${productState.color}`);
   }
   qa('.cv2ProductCard').forEach(card=>{
     const go=()=>openProductV5(card.dataset.cv2Product,card.dataset.cv2Color);card.addEventListener('click',go);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})
@@ -3133,7 +3143,7 @@ if(introMount&&homeMount&&sceneEl){
     model=g.scene;normalize(model);cloneMaterials(model);styleMaterials('intro');group.add(model);group.rotation.set(INTRO_BASE.x,INTRO_BASE.y,INTRO_BASE.z);target={x:INTRO_BASE.x,y:INTRO_BASE.y};
     sceneEl.classList.remove('is-loading');sceneEl.classList.add('has3d');loadEl?.classList.add('ready');setProgress(100,'OBJECT READY');if(hintEl)hintEl.textContent=matchMedia('(pointer:coarse)').matches?'TOUCH / THROW':'DRAG / THROW';
     api.ready=true;
-    if(document.getElementById('cv2Site')?.getAttribute('aria-hidden')==='false')attachHome();
+    if(document.getElementById('cv2Site')?.getAttribute('aria-hidden')==='false')park();
   },xhr=>{if(xhr.total)setProgress(xhr.loaded/xhr.total*100);else if(statusEl)statusEl.textContent='LOADING OBJECT'},err=>{console.warn('CARNEVELE 3D fallback',err);sceneEl.classList.remove('is-loading');loadEl?.classList.add('failed');if(statusEl)statusEl.textContent='2D FALLBACK'});
   introMount.addEventListener('pointerenter',()=>pointerInside=true);introMount.addEventListener('pointerleave',()=>{pointerInside=false;drag=false});
   introMount.addEventListener('pointerdown',e=>{if(!model||focus||mode!=='intro')return;drag=true;lastInteract=performance.now();last={x:e.clientX,y:e.clientY};introMount.setPointerCapture?.(e.pointerId)});
@@ -3141,12 +3151,13 @@ if(introMount&&homeMount&&sceneEl){
   function release(e){drag=false;lastInteract=performance.now();try{introMount.releasePointerCapture?.(e.pointerId)}catch(_){}}
   introMount.addEventListener('pointerup',release);introMount.addEventListener('pointercancel',release);
   function focusHead(){if(!model)return;focus=true;drag=false;vel={x:0,y:0};styleMaterials('intro');const hy=headY(),gs=window.gsap;if(gs){gs.to(target,{x:FRONT_X,y:0,duration:.44,ease:'power2.out'});gs.to(group.rotation,{x:FRONT_X,y:0,z:0,duration:.48,ease:'power2.out'});gs.to(camera.position,{x:0,y:hy,z:.54,duration:1.17,ease:'power4.in'});gs.to(camera,{fov:21.5,duration:1.08,ease:'power3.in',onUpdate:()=>camera.updateProjectionMatrix()})}else{group.rotation.set(FRONT_X,0,0);camera.position.set(0,hy,.54);camera.fov=21.5;camera.updateProjectionMatrix()}}
-  function attachHome(){if(!model||mode==='home')return;mode='home';focus=false;activeMount=homeMount;homeMount.appendChild(renderer.domElement);camera.position.set(0,0,HOME_Z);camera.fov=30;camera.updateProjectionMatrix();group.rotation.set(HOME_BASE.x,HOME_BASE.y,HOME_BASE.z);target={x:HOME_BASE.x,y:HOME_BASE.y};vel={x:0,y:0};styleMaterials('home');resize();document.body.classList.add('cv2Home3DReady')}
-  function setHomeMorph(ease){homeEase=ease||0}
-  const api=window.cv3d={ready:false,focusHead,attachHome,setHomeMorph};
-  function tick(t){requestAnimationFrame(tick);if(model){if(mode==='intro'&&!focus){if(!drag){vel.x*=.965;vel.y*=.965;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);target.y+=vel.y;const idle=!reducedMotion&&t-lastInteract>1450&&!pointerInside;if(idle)vel.y+=.00055}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}else if(mode==='home'){const amp=reducedMotion?0:(1-homeEase)*.028;group.rotation.x+=(HOME_BASE.x-group.rotation.x)*.08;group.rotation.y+=((HOME_BASE.y+Math.sin(t*.00072)*amp)-group.rotation.y)*.06;group.rotation.z+=(HOME_BASE.z-group.rotation.z)*.08;camera.position.z=HOME_Z;camera.position.y=0}}renderer.render(scene3,camera)}requestAnimationFrame(tick);
+  function park(){mode='parked';focus=false;drag=false;vel={x:0,y:0};document.body.classList.remove('cv2Home3DReady')}
+  function attachHome(){park()} // compatibility: 3D is intentionally never shown on home.
+  function setHomeMorph(){/* static 2D logo handles the home/header morph */}
+  const api=window.cv3d={ready:false,focusHead,attachHome,park,setHomeMorph};
+  function tick(t){requestAnimationFrame(tick);if(model&&mode==='intro'){if(!focus){if(!drag){vel.x*=.965;vel.y*=.965;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);target.y+=vel.y;const idle=!reducedMotion&&t-lastInteract>1450&&!pointerInside;if(idle)vel.y+=.00055}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}renderer.render(scene3,camera)}}requestAnimationFrame(tick);
 }
 </script>
 
-<!-- CARNEVELE REDESIGN V9 UPRIGHT GLB + THROW 3D / 2026-09-05 -->
+<!-- CARNEVELE REDESIGN V10 — GLB 3D ONLY IN PRE-PAGE / STATIC LOGO ON STORE -->
 </body></html>
