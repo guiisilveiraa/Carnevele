@@ -1755,7 +1755,7 @@ body>.bar,body>header,body>.cvMobileHeader,body>.hero,body>.ticker,body>.shop,bo
 
 <style id="carnevele-v6-3d-css">
 /* CARNEVELE V6 — real 3D object / cinematic hand-off */
-.cv2IntroScene{width:clamp(220px,25vw,350px);aspect-ratio:1.12/1;isolation:isolate}
+.cv2IntroScene{width:clamp(205px,23vw,310px);aspect-ratio:1.12/1;isolation:isolate}
 #cv2ThreeMount{inset:-16%;transition:opacity .35s ease}
 #cv2ThreeMount canvas{filter:drop-shadow(0 24px 28px rgba(0,0,0,.15))}
 #cv2IntroFallback{width:109%;height:109%;filter:drop-shadow(0 18px 18px rgba(0,0,0,.10));transition:opacity .42s ease,visibility .42s ease,transform .45s var(--cv2-ease)}
@@ -1769,7 +1769,7 @@ body.cv2Home3DReady #cv2Morph3D{opacity:1}
 body.cv2Home3DReady #cv2MorphLogo{opacity:0!important;visibility:hidden}
 #cv2TransitionCurtain{background:#0d0e0d}
 .cv2IntroScene.cv2Focusing{cursor:default!important}
-@media(max-width:800px){.cv2IntroScene{width:min(58vw,245px)}#cv2Morph3D{width:170px;top:calc(var(--cv2-header-h) + 8vh)}.cv2ModelLoad{margin-top:-8px}}
+@media(max-width:800px){.cv2IntroScene{width:min(52vw,215px)}#cv2Morph3D{width:150px;top:calc(var(--cv2-header-h) + 8vh)}.cv2ModelLoad{margin-top:-8px}}
 @media(prefers-reduced-motion:reduce){.cv2ModelLoad b{transition:none}}
 </style>
 
@@ -3019,7 +3019,7 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
   function updateMorph(force=false){
     if(!site||site.getAttribute('aria-hidden')==='true')return;
     const mobile=innerWidth<=800,hh=mobile?56:66;
-    const startTop=hh+innerHeight*.075,startW=mobile?170:230,targetW=mobile?30:38,targetTop=(hh-targetW)/2;
+    const startTop=hh+innerHeight*.075,startW=mobile?150:210,targetW=mobile?30:38,targetTop=(hh-targetW)/2;
     let p=productMode?1:Math.min(1,Math.max(0,scrollY/(mobile?270:390)));
     const ease=1-Math.pow(1-p,3),top=startTop+(targetTop-startTop)*ease,w=startW+(targetW-startW)*ease;
     for(const el of [morph,morph3d])if(el){el.style.top=top+'px';el.style.width=w+'px';el.style.maxWidth='none';el.style.transform='translateX(-50%)'}
@@ -3094,15 +3094,17 @@ if(introMount&&homeMount&&sceneEl){
   const scene3=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(30,1,.01,100);camera.position.set(0,0,4.15);
   const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance',premultipliedAlpha:true});
-  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;renderer.setPixelRatio(Math.min(devicePixelRatio||1,matchMedia('(max-width:800px)').matches?1.6:2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;renderer.setClearColor(0x000000,0);introMount.appendChild(renderer.domElement);
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;renderer.setPixelRatio(Math.min(devicePixelRatio||1,matchMedia('(max-width:800px)').matches?1.6:2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;renderer.setClearColor(0x000000,0);introMount.appendChild(renderer.domElement);
   const pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();const env=pmrem.fromScene(room,.042);scene3.environment=env.texture;room.dispose();pmrem.dispose();
   scene3.add(new THREE.HemisphereLight(0xffffff,0x505050,1.15));
   const key=new THREE.DirectionalLight(0xffffff,3.8);key.position.set(3.1,4.2,5);scene3.add(key);
   const rim=new THREE.DirectionalLight(0xe9edf2,2.2);rim.position.set(-3.8,1.1,-1.6);scene3.add(rim);
   const fill=new THREE.DirectionalLight(0xfff5ea,1.55);fill.position.set(-.6,-2.6,2.9);scene3.add(fill);
   const group=new THREE.Group();scene3.add(group);
-  let model=null,activeMount=introMount,mode='intro',drag=false,pointerInside=false,last={x:0,y:0},vel={x:0,y:0},target={x:-.08,y:-.34},lastInteract=performance.now(),homeEase=0,focus=false;
-  const HOME_Z=4.05,HEAD_Y=.50,INTRO_BASE={x:-.08,y:-.34,z:0},HOME_BASE={x:-.15,y:.42,z:-.035};
+  let model=null,activeMount=introMount,mode='intro',drag=false,pointerInside=false,last={x:0,y:0},vel={x:0,y:0},target={x:0,y:0},lastInteract=performance.now(),homeEase=0,focus=false;
+  const FRONT_X=0;
+  const HOME_Z=4.25,INTRO_BASE={x:FRONT_X-.055,y:-.16,z:.012},HOME_BASE={x:FRONT_X-.075,y:.16,z:0};
+  const headY=()=>innerWidth<=800?.42:.50;
   function resize(){const r=activeMount.getBoundingClientRect();const w=Math.max(1,r.width),h=Math.max(1,r.height);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
   const ro=new ResizeObserver(()=>resize());ro.observe(introMount);ro.observe(homeMount);resize();
   function eachMaterial(root,fn){root.traverse(o=>{if(!o.isMesh)return;o.frustumCulled=true;if(Array.isArray(o.material))o.material=o.material.map(m=>fn(m));else if(o.material)o.material=fn(o.material)})}
@@ -3110,8 +3112,8 @@ if(introMount&&homeMount&&sceneEl){
   function styleMaterials(variant='intro'){
     if(!model)return;
     const cfg=variant==='home'
-      ? {color:'#707070',metalness:.98,roughness:.24,clearcoat:.55,clearcoatRoughness:.14,envMapIntensity:1.08,opacity:.62}
-      : {color:'#5d5d5d',metalness:.94,roughness:.16,clearcoat:.85,clearcoatRoughness:.08,envMapIntensity:1.38,opacity:.97};
+      ? {color:'#777777',metalness:.72,roughness:.28,clearcoat:.52,clearcoatRoughness:.16,envMapIntensity:1.0,opacity:.57}
+      : {color:'#6b6b6b',metalness:.82,roughness:.20,clearcoat:.78,clearcoatRoughness:.10,envMapIntensity:1.18,opacity:.96};
     eachMaterial(model,mat=>{
       const m=mat;
       if(m.color)m.color.set(cfg.color);
@@ -3124,7 +3126,7 @@ if(introMount&&homeMount&&sceneEl){
       return m;
     });
   }
-  function normalize(root){const bg=root.getObjectByName('background');if(bg?.parent)bg.parent.remove(bg);root.traverse(o=>{if(o.isMesh&&o.material?.extensions?.KHR_materials_unlit&&o.parent)o.visible=false});const box=new THREE.Box3().setFromObject(root),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());root.position.sub(center);const s=2.34/Math.max(size.x,size.y);root.scale.setScalar(s);return {size,scale:s}}
+  function normalize(root){const bg=root.getObjectByName('background');if(bg?.parent)bg.parent.remove(bg);root.traverse(o=>{if(o.isMesh&&o.material?.extensions?.KHR_materials_unlit&&o.parent)o.visible=false});const box=new THREE.Box3().setFromObject(root),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());root.position.sub(center);const s=2.08/Math.max(size.x,size.y,size.z);root.scale.setScalar(s);return {size,scale:s}}
   function setProgress(p,label){if(barEl)barEl.style.width=Math.max(4,Math.min(100,p))+'%';if(statusEl)statusEl.textContent=label||`OBJECT ${Math.round(p)}%`}
   setProgress(4,'LOADING OBJECT');sceneEl.classList.add('is-loading');
   new GLTFLoader().load('./carnevele-logo.glb',g=>{
@@ -3135,16 +3137,16 @@ if(introMount&&homeMount&&sceneEl){
   },xhr=>{if(xhr.total)setProgress(xhr.loaded/xhr.total*100);else if(statusEl)statusEl.textContent='LOADING OBJECT'},err=>{console.warn('CARNEVELE 3D fallback',err);sceneEl.classList.remove('is-loading');loadEl?.classList.add('failed');if(statusEl)statusEl.textContent='2D FALLBACK'});
   introMount.addEventListener('pointerenter',()=>pointerInside=true);introMount.addEventListener('pointerleave',()=>{pointerInside=false;drag=false});
   introMount.addEventListener('pointerdown',e=>{if(!model||focus||mode!=='intro')return;drag=true;lastInteract=performance.now();last={x:e.clientX,y:e.clientY};introMount.setPointerCapture?.(e.pointerId)});
-  introMount.addEventListener('pointermove',e=>{if(!model||focus||mode!=='intro'||!drag)return;lastInteract=performance.now();const dx=e.clientX-last.x,dy=e.clientY-last.y;vel.y=dx*.0105;vel.x=dy*.0066;target.y+=vel.y;target.x=THREE.MathUtils.clamp(target.x+vel.x,-.52,.36);last={x:e.clientX,y:e.clientY}});
+  introMount.addEventListener('pointermove',e=>{if(!model||focus||mode!=='intro'||!drag)return;lastInteract=performance.now();const dx=e.clientX-last.x,dy=e.clientY-last.y;vel.y=dx*.0105;vel.x=dy*.0066;target.y+=vel.y;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);last={x:e.clientX,y:e.clientY}});
   function release(e){drag=false;lastInteract=performance.now();try{introMount.releasePointerCapture?.(e.pointerId)}catch(_){}}
   introMount.addEventListener('pointerup',release);introMount.addEventListener('pointercancel',release);
-  function focusHead(){if(!model)return;focus=true;drag=false;vel={x:0,y:0};styleMaterials('intro');const gs=window.gsap;if(gs){gs.to(target,{x:0,y:0,duration:.44,ease:'power2.out'});gs.to(group.rotation,{x:0,y:0,z:0,duration:.48,ease:'power2.out'});gs.to(camera.position,{x:0,y:HEAD_Y,z:.54,duration:1.17,ease:'power4.in'});gs.to(camera,{fov:21.5,duration:1.08,ease:'power3.in',onUpdate:()=>camera.updateProjectionMatrix()})}else{group.rotation.set(0,0,0);camera.position.set(0,HEAD_Y,.54);camera.fov=21.5;camera.updateProjectionMatrix()}}
+  function focusHead(){if(!model)return;focus=true;drag=false;vel={x:0,y:0};styleMaterials('intro');const hy=headY(),gs=window.gsap;if(gs){gs.to(target,{x:FRONT_X,y:0,duration:.44,ease:'power2.out'});gs.to(group.rotation,{x:FRONT_X,y:0,z:0,duration:.48,ease:'power2.out'});gs.to(camera.position,{x:0,y:hy,z:.54,duration:1.17,ease:'power4.in'});gs.to(camera,{fov:21.5,duration:1.08,ease:'power3.in',onUpdate:()=>camera.updateProjectionMatrix()})}else{group.rotation.set(FRONT_X,0,0);camera.position.set(0,hy,.54);camera.fov=21.5;camera.updateProjectionMatrix()}}
   function attachHome(){if(!model||mode==='home')return;mode='home';focus=false;activeMount=homeMount;homeMount.appendChild(renderer.domElement);camera.position.set(0,0,HOME_Z);camera.fov=30;camera.updateProjectionMatrix();group.rotation.set(HOME_BASE.x,HOME_BASE.y,HOME_BASE.z);target={x:HOME_BASE.x,y:HOME_BASE.y};vel={x:0,y:0};styleMaterials('home');resize();document.body.classList.add('cv2Home3DReady')}
   function setHomeMorph(ease){homeEase=ease||0}
   const api=window.cv3d={ready:false,focusHead,attachHome,setHomeMorph};
-  function tick(t){requestAnimationFrame(tick);if(model){if(mode==='intro'&&!focus){if(!drag){vel.x*=.965;vel.y*=.965;target.x=THREE.MathUtils.clamp(target.x+vel.x,-.52,.36);target.y+=vel.y;const idle=!reducedMotion&&t-lastInteract>1450&&!pointerInside;if(idle)vel.y+=.00055}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}else if(mode==='home'){const amp=reducedMotion?0:(1-homeEase)*.028;group.rotation.x+=(HOME_BASE.x-group.rotation.x)*.08;group.rotation.y+=((HOME_BASE.y+Math.sin(t*.00072)*amp)-group.rotation.y)*.06;group.rotation.z+=(HOME_BASE.z-group.rotation.z)*.08;camera.position.z=HOME_Z;camera.position.y=0}}renderer.render(scene3,camera)}requestAnimationFrame(tick);
+  function tick(t){requestAnimationFrame(tick);if(model){if(mode==='intro'&&!focus){if(!drag){vel.x*=.965;vel.y*=.965;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);target.y+=vel.y;const idle=!reducedMotion&&t-lastInteract>1450&&!pointerInside;if(idle)vel.y+=.00055}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}else if(mode==='home'){const amp=reducedMotion?0:(1-homeEase)*.028;group.rotation.x+=(HOME_BASE.x-group.rotation.x)*.08;group.rotation.y+=((HOME_BASE.y+Math.sin(t*.00072)*amp)-group.rotation.y)*.06;group.rotation.z+=(HOME_BASE.z-group.rotation.z)*.08;camera.position.z=HOME_Z;camera.position.y=0}}renderer.render(scene3,camera)}requestAnimationFrame(tick);
 }
 </script>
 
-<!-- CARNEVELE REDESIGN V6 REAL 3D / 2026-09-05 -->
+<!-- CARNEVELE REDESIGN V9 UPRIGHT GLB + THROW 3D / 2026-09-05 -->
 </body></html>
