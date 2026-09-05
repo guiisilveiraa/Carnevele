@@ -1585,6 +1585,15 @@ html,body{background:#fff!important}
 }
 </style>
 
+
+<style id="carnevele-mobile-overlay-fix">
+/* Mobile: overlays/pages must sit above the sticky site header. */
+@media (max-width:800px){
+  body>.cvMobileHeader{z-index:30!important}
+  .pageLayer{z-index:80!important}
+  .pageLayer .accountTop,.pageLayer .pageTop{z-index:81!important}
+}
+</style>
 </head>
 <body>
 <div class="bar">FIRST INTENTIONS · DROP 01 / 2026 · BUILT WITH INTENTION · DESIGNED BY FRIENDS</div>
