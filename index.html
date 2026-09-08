@@ -3113,7 +3113,7 @@ if(introMount&&homeMount&&sceneEl){
   const group=new THREE.Group();scene3.add(group);
   let model=null,activeMount=introMount,mode='intro',drag=false,pointerInside=false,last={x:0,y:0},vel={x:0,y:0},target={x:0,y:0},lastInteract=performance.now(),homeEase=0,focus=false;
   const FRONT_X=0;
-  const HOME_Z=4.25,INTRO_BASE={x:FRONT_X-.055,y:-.16,z:.012},HOME_BASE={x:FRONT_X-.075,y:.16,z:0};
+  const HOME_Z=4.25,INTRO_BASE={x:FRONT_X-.035,y:-.10,z:.008},HOME_BASE={x:FRONT_X-.075,y:.16,z:0};
   const headY=()=>innerWidth<=800?.42:.50;
   function resize(){const r=activeMount.getBoundingClientRect();const w=Math.max(1,r.width),h=Math.max(1,r.height);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
   const ro=new ResizeObserver(()=>resize());ro.observe(introMount);ro.observe(homeMount);resize();
@@ -3155,9 +3155,9 @@ if(introMount&&homeMount&&sceneEl){
   function attachHome(){park()} // compatibility: 3D is intentionally never shown on home.
   function setHomeMorph(){/* static 2D logo handles the home/header morph */}
   const api=window.cv3d={ready:false,focusHead,attachHome,park,setHomeMorph};
-  function tick(t){requestAnimationFrame(tick);if(model&&mode==='intro'){if(!focus){if(!drag){vel.x*=.965;vel.y*=.965;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);target.y+=vel.y;const idle=!reducedMotion&&t-lastInteract>1450&&!pointerInside;if(idle)vel.y+=.00055}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}renderer.render(scene3,camera)}}requestAnimationFrame(tick);
+  function tick(t){requestAnimationFrame(tick);if(model&&mode==='intro'){if(!focus){if(!drag){/* no automatic spin: the logo only moves after mouse/touch interaction */vel.x*=.972;vel.y*=.972;target.x=THREE.MathUtils.clamp(target.x+vel.x,FRONT_X-.42,FRONT_X+.34);target.y+=vel.y;if(Math.abs(vel.x)<.00003)vel.x=0;if(Math.abs(vel.y)<.00003)vel.y=0}group.rotation.x+=(target.x-group.rotation.x)*.085;group.rotation.y+=(target.y-group.rotation.y)*.085;group.rotation.z+=(0-group.rotation.z)*.1}renderer.render(scene3,camera)}}requestAnimationFrame(tick);
 }
 </script>
 
-<!-- CARNEVELE REDESIGN V10 — GLB 3D ONLY IN PRE-PAGE / STATIC LOGO ON STORE -->
+<!-- CARNEVELE REDESIGN V11 — INTERACTIVE GLB ONLY ON PRE-PAGE, NO AUTO-SPIN / STATIC LOGO ON STORE -->
 </body></html>
