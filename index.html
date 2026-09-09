@@ -899,6 +899,15 @@ button.accountProfileRow{cursor:pointer}.accountProfileRow:hover{opacity:.58}.ac
 @media(max-width:900px){#cvFooter .cvFooterMain{grid-template-columns:1fr;gap:40px}#cvFooter .cvFooterLinks{border-top:1px solid #eee;padding-top:32px}#cvFooter .cvNewsletterWrap{max-width:420px}}
 @media(max-width:600px){#cvFooter{padding-left:20px;padding-right:20px}#cvFooter .cvFooterLinks{grid-template-columns:1fr 1fr;gap:34px 24px}#cvFooter .cvFooterLinks>div:last-child{grid-column:1/-1}#cvFooter .cvFooterBase{grid-template-columns:1fr;gap:24px}}
 
+/* Sticky header: white identity on the campaign, black on white elsewhere. */
+#cv2Header{position:sticky;top:0;z-index:65;transition:background-color .25s ease,color .25s ease,box-shadow .25s ease}
+#cv2Site #cv2Header{background:transparent;color:#fff;box-shadow:none}
+#cv2Header .cvWordmark img{filter:brightness(0) invert(1);mix-blend-mode:normal;transition:filter .25s ease}
+#cv2Site #cv2Header.cvHeaderSolid{background:#fff;color:#111;box-shadow:0 1px 0 #ededed}
+#cv2Header.cvHeaderSolid .cvWordmark img{filter:brightness(0)}
+#cv2Collection{scroll-margin-top:var(--header-height)}
+.cvProductBuy{top:calc(var(--header-height) + 24px)}
+
 </style>
 </head>
 <body>
@@ -1991,7 +2000,11 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
   const initialHash = location.hash;
   let introBusy = false, entered = false, productMode = false, productState = {index: 0, color: 'white', size: 'M'};
   let collectionScroll = 0, productTimer, addTimer, lastProductCard = null;
-  function updateHeader() { header.classList.toggle('cvHeaderSolid', productMode || window.scrollY > 24); }
+  function updateHeader() {
+    const banner = q('#cvHomeBanner');
+    const overBanner = !productMode && !home.hidden && !banner.hidden && banner.getBoundingClientRect().bottom > header.offsetHeight;
+    header.classList.toggle('cvHeaderSolid', !overBanner);
+  }
   window.addEventListener('scroll', updateHeader, {passive: true});
   const scrollOptions = top => ({top, behavior: reduceMotion() ? 'instant' : 'smooth'});
   products.forEach(p => { p.images = {...assets[p.id]}; });
@@ -2068,6 +2081,7 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
     ['#cv2Collection','#cv2Manifesto','#cv2Contact'].forEach(id => { q(id).hidden = id !== selector; });
     qa('[data-room]').forEach(b => { if (b.dataset.room === selector) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
     window.scrollTo(0,0);
+    updateHeader();
     if (focus) q(selector + ' h1')?.focus({preventScroll:true});
     if (selector === '#cv2Collection') requestAnimationFrame(updateRail);
     document.title = selector === '#cv2Collection' ? 'Clothing — CARNEVELE' : selector === '#cv2Manifesto' ? 'Collections — CARNEVELE' : 'Contato — CARNEVELE';
@@ -2144,6 +2158,7 @@ renderProducts();renderCart();renderCollectionPage();showPaymentReturnStatus();i
     }
   }, true);
   window.addEventListener('resize',updateRail);
+  window.addEventListener('resize',updateHeader);
   requestAnimationFrame(updateRail);
   function openMenu() {
     closeSearch(); closeCart(); closeAccountPage();
