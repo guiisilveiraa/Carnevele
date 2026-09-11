@@ -1855,7 +1855,9 @@ footer {
               "price": "199.90",
               "priceCurrency": "BRL"
             }
-          }
+          },
+          {"@type": "Product", "name": "Lucky Guy Tee", "sku": "lucky", "brand": {"@type": "Brand", "name": "CARNEVELE"}, "offers": {"@type": "Offer", "price": "199.90", "priceCurrency": "BRL"}},
+          {"@type": "Product", "name": "Growing Together Tee", "sku": "growing", "brand": {"@type": "Brand", "name": "CARNEVELE"}, "offers": {"@type": "Offer", "price": "199.90", "priceCurrency": "BRL"}}
         ]
       }
     </script>
@@ -1991,9 +1993,9 @@ footer {
       </div>
       <div class="intro-bottom">
         <div>
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener"
+          <a href="https://www.instagram.com/carnevele?stkn=Y3M5MXQwZmZpNjk0&amp;utm_source=qr" target="_blank" rel="noopener"
             >Instagram ↗</a
-          ><a href="https://www.tiktok.com/" target="_blank" rel="noopener"
+          ><a href="https://www.tiktok.com/@carnevele?_r=1&amp;_t=ZS-99d3ECMKzNx" target="_blank" rel="noopener"
             >TikTok ↗</a
           >
         </div>
@@ -2181,12 +2183,21 @@ footer {
                 </div></a
               >
             </article>
+            <article class="product-card card-5">
+              <a href="#product/lucky/white" class="product-link" aria-label="Lucky Guy Tee R$ 199,90 WHITE"><div class="product-media"><img src="./assets/products/lucky/back-white.png" alt="Lucky Guy Tee white, estampa nas costas" width="3375" height="3375" loading="lazy" decoding="async" /></div><div class="product-meta"><h3>Lucky Guy Tee</h3><span>R$ 199,90</span><small>WHITE</small></div></a>
+            </article>
+            <article class="product-card card-6">
+              <a href="#product/lucky/black" class="product-link" aria-label="Lucky Guy Tee R$ 199,90 BLACK"><div class="product-media"><img src="./assets/products/lucky/back-black.png" alt="Lucky Guy Tee black, estampa nas costas" width="3375" height="3375" loading="lazy" decoding="async" /></div><div class="product-meta"><h3>Lucky Guy Tee</h3><span>R$ 199,90</span><small>BLACK</small></div></a>
+            </article>
+            <article class="product-card card-7">
+              <a href="#product/growing/gray" class="product-link" aria-label="Growing Together Tee R$ 199,90 GRAY"><div class="product-media"><img src="./assets/products/growing/back-gray.png" alt="Growing Together Tee gray, estampa nas costas" width="3375" height="3375" loading="lazy" decoding="async" /></div><div class="product-meta"><h3>Growing Together Tee</h3><span>R$ 199,90</span><small>GRAY</small></div></a>
+            </article>
           </div>
           <div class="rail-controls">
             <span>ARRASTE PARA EXPLORAR</span>
             <div>
               <button id="railPrev" aria-label="Peça anterior">←</button
-              ><span id="railStatus" role="status">01 / 04</span
+              ><span id="railStatus" role="status">01 / 07</span
               ><button id="railNext" aria-label="Próxima peça">→</button>
             </div>
             <span>100% ALGODÃO / 210 GSM</span>
@@ -2277,6 +2288,7 @@ footer {
                 >
                   <i class="black"></i> BLACK
                 </button>
+                <button data-color="gray" aria-label="GRAY" aria-pressed="false" hidden><i style="background:#aaa"></i> GRAY</button>
               </div>
             </fieldset>
             <fieldset>
@@ -2337,9 +2349,9 @@ footer {
           </div>
           <div>
             <h2>FOLLOW US</h2>
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener"
+            <a href="https://www.instagram.com/carnevele?stkn=Y3M5MXQwZmZpNjk0&amp;utm_source=qr" target="_blank" rel="noopener"
               >INSTAGRAM ↗</a
-            ><a href="https://www.tiktok.com/" target="_blank" rel="noopener"
+            ><a href="https://www.tiktok.com/@carnevele?_r=1&amp;_t=ZS-99d3ECMKzNx" target="_blank" rel="noopener"
               >TIKTOK ↗</a
             >
           </div>
@@ -2868,6 +2880,7 @@ footer {
 const products = [
   {
     id: "boat",
+    keywords: ["boat", "barco", "dreams"],
     name: "Following Dreams Tee",
     price: 199.9,
     color: "white",
@@ -2888,6 +2901,7 @@ const products = [
   },
   {
     id: "women",
+    keywords: ["women", "mulher"],
     name: "Dangerous Women Tee",
     price: 199.9,
     color: "black",
@@ -2898,6 +2912,29 @@ const products = [
     description:
       "Camiseta Dangerous Women com estampa nas costas. 100% algodão, 210 GSM e mangas amplas.",
     gallery: [],
+  },
+  {
+    id: "lucky",
+    name: "Lucky Guy Tee",
+    price: 199.9,
+    color: "white",
+    keywords: ["trevo", "clover", "blue clover", "carnevele lucky"],
+    images: {
+      white: "./assets/products/lucky/back-white.png",
+      black: "./assets/products/lucky/back-black.png",
+    },
+    description: "Luck is what you make of it. Lucky Guy is part of First Intentions, built around the idea of creating your own path.",
+    gallery: [{ src: "./assets/products/lucky/front-white.png", color: "white", alt: "Lucky Guy Tee WHITE, frente", label: "FRENTE / WHITE", productShot: true }],
+  },
+  {
+    id: "growing",
+    name: "Growing Together Tee",
+    price: 199.9,
+    color: "gray",
+    keywords: ["flower", "flowers", "flores", "bee", "abelha", "garden", "carnevele growing"],
+    images: { gray: "./assets/products/growing/back-gray.png" },
+    description: "Created around friendship, connection and growth. Growing Together represents the people and stories that grow alongside CARNEVELE.",
+    gallery: [{ src: "./assets/products/growing/front-gray.png", color: "gray", alt: "Growing Together Tee GRAY, frente", label: "FRENTE / GRAY", productShot: true }],
   },
 ];
 const $ = (selector) => document.querySelector(selector);
@@ -2911,8 +2948,7 @@ try {
   cart = saved
     .filter(
       (i) =>
-        products.some((p) => p.id === i.id) &&
-        ["white", "black"].includes(i.color) &&
+        products.some((p) => p.id === i.id && Object.hasOwn(p.images, i.color)) &&
         ["PP", "P", "M", "G"].includes(i.size) &&
         Number.isInteger(i.quantity) &&
         i.quantity > 0 &&
@@ -3105,7 +3141,8 @@ function navigate(hash, update = true) {
   };
   hash = aliases[hash] || hash || "#home";
   if (update && location.hash !== hash) history.pushState({}, "", hash);
-  const match = hash.match(/^#product\/(boat|women)\/(white|black)$/);
+  const route = hash.match(/^#product\/([a-z]+)\/([a-z]+)$/);
+  const match = route && products.some((p) => p.id === route[1] && Object.hasOwn(p.images, route[2])) ? route : null;
   $("#home").hidden = !!match;
   $("#productView").hidden = !match;
   if (match) {
@@ -3139,6 +3176,7 @@ document.addEventListener("click", (e) => {
 });
 // Native horizontal scrolling on touch; pointer drag on desktop.
 const rail = $("#productRail");
+$("#railStatus").textContent = `01 / ${String(rail.querySelectorAll(".product-card").length).padStart(2, "0")}`;
 let drag = null,
   preventRailClick = false,
   railSettleTimer;
@@ -3159,8 +3197,9 @@ $("#railNext").onclick = () => moveRail(1);
 rail.addEventListener(
   "scroll",
   () => {
-    const index = Math.min(3, Math.round(rail.scrollLeft / railStep()));
-    $("#railStatus").textContent = `0${index + 1} / 04`;
+    const count = rail.querySelectorAll(".product-card").length;
+    const index = Math.min(count - 1, Math.round(rail.scrollLeft / railStep()));
+    $("#railStatus").textContent = `${String(index + 1).padStart(2, "0")} / ${String(count).padStart(2, "0")}`;
     $("#railPrev").disabled = rail.scrollLeft < 2;
     $("#railNext").disabled =
       rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2;
@@ -3241,12 +3280,13 @@ function renderProduct() {
   $("#productGallery").innerHTML = shots
     .map(
       (s, i) =>
-        `<figure><img src="${s.src}" alt="${s.alt}" width="900" height="1062" ${i ? 'loading="lazy"' : ""} decoding="async" class="${i ? "campaign-shot" : ""}"><figcaption><span>${s.label}</span><span>0${i + 1} / 0${shots.length}</span></figcaption></figure>`,
+        `<figure><img src="${s.src}" alt="${s.alt}" width="900" height="1062" ${i ? 'loading="lazy"' : ""} decoding="async" class="${i && !s.productShot ? "campaign-shot" : ""}"><figcaption><span>${s.label}</span><span>0${i + 1} / 0${shots.length}</span></figcaption></figure>`,
     )
     .join("");
-  $$("[data-color]").forEach((b) =>
-    b.setAttribute("aria-pressed", String(b.dataset.color === selected.color)),
-  );
+  $$("[data-color]").forEach((b) => {
+    b.hidden = !Object.hasOwn(p.images, b.dataset.color);
+    b.setAttribute("aria-pressed", String(b.dataset.color === selected.color));
+  });
   $$("[data-size]").forEach((b) =>
     b.setAttribute("aria-pressed", String(b.dataset.size === selected.size)),
   );
@@ -3255,6 +3295,7 @@ function renderProduct() {
 $$("[data-color]").forEach(
   (b) =>
     (b.onclick = () => {
+      if (!Object.hasOwn(products[selected.index].images, b.dataset.color)) return;
       selected.color = b.dataset.color;
       history.replaceState(
         {},
@@ -3366,7 +3407,7 @@ function matchingProducts(query) {
     (p) =>
       !q ||
       normalizeSearch(
-        `${p.name} camiseta tee first intentions drop 01 ${p.id === "boat" ? "barco dreams" : "mulher women"}`,
+        `${p.name} camiseta tee first intentions drop 01 ${(p.keywords || []).join(" ")}`,
       ).includes(q),
   );
 }
@@ -3382,7 +3423,7 @@ function renderSearch(query = "") {
             `<a class="search-result" href="#product/${p.id}/${p.color}"><img src="${p.images[p.color]}" alt="${p.name}" width="90" height="112"><span><strong>${p.name}</strong><small>${money(p.price)}</small></span><span>↗</span></a>`,
         )
         .join("")
-    : '<p class="search-empty">Nenhuma peça encontrada. Tente “Following”, “Dangerous” ou “First Intentions”.</p>';
+    : '<p class="search-empty">Nenhuma peça encontrada. Tente “Following”, “Dangerous”, “Lucky”, “Growing” ou “First Intentions”.</p>';
 }
 $("#searchInput").oninput = (e) => renderSearch(e.target.value);
 $("#searchInput").onkeydown = (e) => {
