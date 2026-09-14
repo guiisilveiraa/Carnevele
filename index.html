@@ -3467,7 +3467,7 @@ window.addEventListener("load", () => {
 <script>
 // CHECKOUT MERCADO PAGO
 // Depois de publicar o backend no Vercel, troque APENAS a URL abaixo.
-const CHECKOUT_API_URL = "https://SEU-PROJETO-VERCEL.vercel.app/api/checkout";
+const CHECKOUT_API_URL = "https://carnevele-api.vercel.app/api/create-checkout";
 
 function paymentNotice(message) {
   let el = document.getElementById("paymentNotice");
@@ -3508,43 +3508,151 @@ function showPaymentReturnStatus() {
 }
 
 async function startCheckout() {
-  if (!cart.length) {
-    paymentNotice("SUA BAG ESTÁ VAZIA.");
-    return;
-  }
-  if (CHECKOUT_API_URL.includes("SEU-PROJETO-VERCEL")) {
-    paymentNotice(
-      "O pagamento ainda não está disponível. Entre em contato com a CARNEVELE para saber mais.",
-    );
-    return;
-  }
   const btn = document.getElementById("checkoutBtn");
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "ABRINDO PAGAMENTO…";
-  }
+
   try {
-    const items = cart.map((item) => ({
-      id: item.id,
-      color: item.color,
-      size: item.size,
-      quantity: item.quantity,
-    }));
-    const response = await fetch(CHECKOUT_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
+    if (!cart || !cart.length) {
+      paymentNotice("Sua bag está vazia.");
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "ABRINDO PAGAMENTO...";
+    }
+
+    // 1. Confere se o cliente está logado
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      paymentNotice("Entre na sua conta para finalizar a compra.");
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Finalizar compra";
+      }
+      return;
+    }
+
+    // 2. Busca o endereço padrão do cliente
+    let { data: addresses, error: addressError } =
+      await supabaseClient
+        .from("addresses")
+        .select("id,is_default")
+        .eq("user_id", session.user.id)
+        .order("is_default", { ascending: false })
+        .limit(1);
+
+    if (addressError) throw addressError;
+
+    if (!addresses || !addresses.length) {
+      paymentNotice(
+        "Cadastre um endereço em MINHA CONTA antes de finalizar a compra."
+      );
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Finalizar compra";
+      }
+
+      return;
+    }
+
+    const addressId = addresses[0].id;
+
+    // 3. Converte os produtos da BAG para os IDs aceitos pelo backend
+    const items = cart.map((item) => {
+      const reference = `
+        ${item.id || ""}
+        ${item.productId || ""}
+        ${item.name || ""}
+        ${item.title || ""}
+      `.toLowerCase();
+
+      let productId = item.productId || item.id;
+
+      if (
+        reference.includes("following") ||
+        reference.includes("dream") ||
+        reference.includes("boat")
+      ) {
+        productId = "following-dreams";
+      }
+
+      if (
+        reference.includes("dangerous") ||
+        reference.includes("women")
+      ) {
+        productId = "dangerous-women";
+      }
+
+      return {
+        productId,
+        color: String(item.color || "").toUpperCase(),
+        size: String(item.size || "").toUpperCase(),
+        quantity: Number(item.quantity || 1)
+      };
     });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.init_point)
-      throw new Error(data.error || "Não foi possível iniciar o pagamento.");
-    window.location.href = data.init_point;
+
+    // 4. Chama nosso backend na Vercel
+    const response = await fetch(
+      "https://carnevele-api.vercel.app/api/create-checkout",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
+
+        body: JSON.stringify({
+          addressId,
+          items
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("CHECKOUT ERROR:", data);
+
+      throw new Error(
+        data.error || "Não foi possível iniciar o pagamento."
+      );
+    }
+
+    if (!data.checkoutUrl) {
+      throw new Error(
+        "O Mercado Pago não retornou o link de pagamento."
+      );
+    }
+
+    // 5. Guarda o pedido atual
+    sessionStorage.setItem(
+      "carnevele_last_order",
+      JSON.stringify({
+        orderId: data.orderId,
+        orderNumber: data.orderNumber,
+        mercadoPagoOrderId: data.mercadoPagoOrderId
+      })
+    );
+
+    // 6. Abre Checkout Pro
+    window.location.href = data.checkoutUrl;
+
   } catch (err) {
     console.error(err);
-    paymentNotice("NÃO FOI POSSÍVEL ABRIR O PAGAMENTO. TENTE NOVAMENTE.");
+
+    paymentNotice(
+      err.message ||
+      "NÃO FOI POSSÍVEL ABRIR O PAGAMENTO. TENTE NOVAMENTE."
+    );
+
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Finalizar compra ↗";
+      btn.textContent = "Finalizar compra";
     }
   }
 }
