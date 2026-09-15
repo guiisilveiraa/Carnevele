@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /Carnevele/
+Disallow: /Carnevele/admin.html
+
+Sitemap: https://guiisilveiraa.github.io/Carnevele/sitemap.xml
