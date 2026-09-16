@@ -1,0 +1,56 @@
+{
+  "siteName": "CARNEVELE",
+  "siteUrl": "https://guiisilveiraa.github.io/Carnevele/",
+  "title": "CARNEVELE — First Intentions",
+  "description": "First Intentions, o primeiro capítulo da CARNEVELE. Camisetas em algodão 240 GSM, criadas entre amigos em São Paulo.",
+  "email": "carnevelecompany@gmail.com",
+  "ga4Id": "",
+  "clarityId": "",
+  "socialImage": "assets/og-carnevele.png",
+  "products": [
+    {
+      "slug": "following-dreams",
+      "appRoute": "#product/boat/white",
+      "name": "Following Dreams Tee",
+      "sku": "following-dreams",
+      "description": "Camiseta Following Dreams com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
+      "image": "assets/media/df54595dc38c.webp",
+      "price": "199.90",
+      "currency": "BRL",
+      "availability": "https://schema.org/PreOrder"
+    },
+    {
+      "slug": "dangerous-women",
+      "appRoute": "#product/women/black",
+      "name": "Dangerous Women Tee",
+      "sku": "dangerous-women",
+      "description": "Camiseta Dangerous Women com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
+      "image": "assets/media/6648ad16261d.webp",
+      "price": "199.90",
+      "currency": "BRL",
+      "availability": "https://schema.org/PreOrder"
+    },
+    {
+      "slug": "lucky-guy",
+      "appRoute": "#product/lucky/white",
+      "name": "Lucky Guy Tee",
+      "sku": "lucky",
+      "description": "Lucky Guy faz parte de First Intentions e representa a ideia de criar o próprio caminho.",
+      "image": "assets/products/lucky/back-white.png",
+      "price": "199.90",
+      "currency": "BRL",
+      "availability": "https://schema.org/PreOrder"
+    },
+    {
+      "slug": "growing-together",
+      "appRoute": "#product/growing/gray",
+      "name": "Growing Together Tee",
+      "sku": "growing",
+      "description": "Growing Together nasceu da amizade, da conexão e das histórias que crescem ao lado da CARNEVELE.",
+      "image": "assets/products/growing/back-gray.png",
+      "price": "199.90",
+      "currency": "BRL",
+      "availability": "https://schema.org/PreOrder"
+    }
+  ]
+}
