@@ -2108,10 +2108,10 @@ footer {
 <!-- /FLORAL -->
           <img
             class="hero-photo"
-            src="./assets/media/07d3fb4866f9.webp"
-            alt="Campanha First Intentions, camiseta Following Dreams preta"
-            width="1672"
-            height="941"
+            src="./assets/products/following-dreams/back-black.webp"
+            alt="Camiseta Following Dreams preta, nova estampa nas costas"
+            width="1800"
+            height="1800"
             decoding="async"
             fetchpriority="high"
           />
@@ -2152,15 +2152,11 @@ footer {
                 aria-label="Following Dreams Tee R$ 199,90 WHITE"
                 ><div class="product-media">
                   <img
-                    src="./assets/media/df54595dc38c.webp"
-                    srcset="
-                      ./assets/media/3ed42e4e3cd2.webp 480w,
-                      ./assets/media/df54595dc38c.webp     900w
-                    "
+                    src="./assets/products/following-dreams/back-white.webp"
                     sizes="(max-width:767px) 84vw, 30vw"
                     alt="Following Dreams Tee white, estampa nas costas"
-                    width="900"
-                    height="900"
+                    width="1800"
+                    height="1800"
                     loading="lazy"
                     decoding="async"
                   />
@@ -2178,15 +2174,11 @@ footer {
                 aria-label="Dangerous Women Tee R$ 199,90 BLACK"
                 ><div class="product-media">
                   <img
-                    src="./assets/media/6648ad16261d.webp"
-                    srcset="
-                      ./assets/media/b1233c6a9dbd.webp 480w,
-                      ./assets/media/6648ad16261d.webp     900w
-                    "
+                    src="./assets/products/dangerous-women/back-black.webp"
                     sizes="(max-width:767px) 84vw, 30vw"
                     alt="Dangerous Women Tee black, estampa nas costas"
-                    width="900"
-                    height="900"
+                    width="1800"
+                    height="1800"
                     loading="lazy"
                     decoding="async"
                   />
@@ -2204,15 +2196,11 @@ footer {
                 aria-label="Following Dreams Tee R$ 199,90 BLACK"
                 ><div class="product-media">
                   <img
-                    src="./assets/media/4a2055cda384.webp"
-                    srcset="
-                      ./assets/media/099bc7e61c28.webp 480w,
-                      ./assets/media/4a2055cda384.webp     900w
-                    "
+                    src="./assets/products/following-dreams/back-black.webp"
                     sizes="(max-width:767px) 84vw, 30vw"
                     alt="Following Dreams Tee black, estampa nas costas"
-                    width="900"
-                    height="900"
+                    width="1800"
+                    height="1800"
                     loading="lazy"
                     decoding="async"
                   />
@@ -2230,15 +2218,11 @@ footer {
                 aria-label="Dangerous Women Tee R$ 199,90 WHITE"
                 ><div class="product-media">
                   <img
-                    src="./assets/media/eab380e996d7.webp"
-                    srcset="
-                      ./assets/media/cc86d3e39e67.webp 480w,
-                      ./assets/media/eab380e996d7.webp     900w
-                    "
+                    src="./assets/products/dangerous-women/back-white.webp"
                     sizes="(max-width:767px) 84vw, 30vw"
                     alt="Dangerous Women Tee white, estampa nas costas"
-                    width="900"
-                    height="900"
+                    width="1800"
+                    height="1800"
                     loading="lazy"
                     decoding="async"
                   />
@@ -2952,19 +2936,12 @@ let products = [
     price: 199.9,
     color: "white",
     images: {
-      white: "./assets/media/df54595dc38c.webp",
-      black: "./assets/media/4a2055cda384.webp",
+      white: "./assets/products/following-dreams/back-white.webp",
+      black: "./assets/products/following-dreams/back-black.webp",
     },
     description:
       "Camiseta Following Dreams com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
-    gallery: [
-      {
-        src: "./assets/media/07d3fb4866f9.webp",
-        color: "black",
-        alt: "Following Dreams Tee preta, fotografia da campanha",
-        label: "CAMPAIGN / BLACK",
-      },
-    ],
+    gallery: [],
   },
   {
     id: "women",
@@ -2974,12 +2951,15 @@ let products = [
     price: 199.9,
     color: "black",
     images: {
-      white: "./assets/media/eab380e996d7.webp",
-      black: "./assets/media/6648ad16261d.webp",
+      white: "./assets/products/dangerous-women/back-white.webp",
+      black: "./assets/products/dangerous-women/back-black.webp",
     },
     description:
       "Camiseta Dangerous Women com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
-    gallery: [],
+    gallery: [
+      { src: "./assets/products/dangerous-women/front-black.webp", color: "black", alt: "Dangerous Women Tee BLACK, frente", label: "FRENTE / BLACK", productShot: true },
+      { src: "./assets/products/dangerous-women/front-white.webp", color: "white", alt: "Dangerous Women Tee WHITE, frente", label: "FRENTE / WHITE", productShot: true },
+    ],
   },
   {
     id: "lucky",
@@ -2993,7 +2973,10 @@ let products = [
       black: "./assets/products/lucky/back-black.png",
     },
     description: "Luck is what you make of it. Lucky Guy is part of First Intentions, built around the idea of creating your own path.",
-    gallery: [{ src: "./assets/products/lucky/front-white.png", color: "white", alt: "Lucky Guy Tee WHITE, frente", label: "FRENTE / WHITE", productShot: true }],
+    gallery: [
+      { src: "./assets/products/lucky/front-black.webp", color: "black", alt: "Lucky Guy Tee BLACK, frente", label: "FRENTE / BLACK", productShot: true },
+      { src: "./assets/products/lucky/front-white.webp", color: "white", alt: "Lucky Guy Tee WHITE, frente", label: "FRENTE / WHITE", productShot: true },
+    ],
   },
   {
     id: "growing",
@@ -3004,7 +2987,7 @@ let products = [
     keywords: ["flower", "flowers", "flores", "bee", "abelha", "garden", "carnevele growing"],
     images: { gray: "./assets/products/growing/back-gray.png" },
     description: "Created around friendship, connection and growth. Growing Together represents the people and stories that grow alongside CARNEVELE.",
-    gallery: [{ src: "./assets/products/growing/front-gray.png", color: "gray", alt: "Growing Together Tee GRAY, frente", label: "FRENTE / GRAY", productShot: true }],
+    gallery: [{ src: "./assets/products/growing/front-gray.webp", color: "gray", alt: "Growing Together Tee GRAY, frente", label: "FRENTE / GRAY", productShot: true }],
   },
 ];
 const SITE_URL = "https://guiisilveiraa.github.io/Carnevele/";
@@ -4041,10 +4024,16 @@ async function hydrateCatalogFromSupabase() {
         ...variant,
         color: String(variant.color).toLowerCase(),
         size: String(variant.size).toUpperCase(),
-      }));
+    }));
     const images = {};
     for (const variant of ownVariants) {
-      if (!images[variant.color]) images[variant.color] = safeCatalogImageUrl(variant.image_url || row.primary_image_url);
+      const databaseImage = variant.image_url || row.primary_image_url;
+      const hasPreRefreshArtwork = ["following-dreams", "dangerous-women"].includes(row.id)
+        && /^\.?\/assets\/media\/[a-f0-9]{12}\.webp$/i.test(String(databaseImage || ""));
+      const displayImage = hasPreRefreshArtwork && fallback?.images?.[variant.color]
+        ? fallback.images[variant.color]
+        : databaseImage;
+      if (!images[variant.color]) images[variant.color] = safeCatalogImageUrl(displayImage);
     }
     const colors = Object.keys(images);
     if (!colors.length && row.primary_image_url) images.default = safeCatalogImageUrl(row.primary_image_url);

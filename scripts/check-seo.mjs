@@ -109,6 +109,26 @@ for (const relativePath of publicPages) {
 
 const indexHtml = read("index.html");
 if (/data:[^;]+;base64,/i.test(indexHtml)) fail("index.html ainda contém asset base64 inline");
+for (const oldBoatReference of [
+  "assets/media/07d3fb4866f9.webp",
+  "assets/media/df54595dc38c.webp",
+  "assets/media/4a2055cda384.webp",
+]) {
+  if (indexHtml.includes(oldBoatReference)) fail(`index.html ainda referencia a arte antiga do barco: ${oldBoatReference}`);
+}
+for (const expectedArtwork of [
+  "assets/products/following-dreams/back-black.webp",
+  "assets/products/following-dreams/back-white.webp",
+  "assets/products/dangerous-women/back-black.webp",
+  "assets/products/dangerous-women/back-white.webp",
+  "assets/products/dangerous-women/front-black.webp",
+  "assets/products/dangerous-women/front-white.webp",
+  "assets/products/lucky/front-black.webp",
+  "assets/products/lucky/front-white.webp",
+  "assets/products/growing/front-gray.webp",
+]) {
+  if (!indexHtml.includes(expectedArtwork)) fail(`index.html não usa a arte de catálogo esperada: ${expectedArtwork}`);
+}
 for (const type of ["Organization", "WebSite", "ItemList"]) {
   if (!indexHtml.includes(`"@type": "${type}"`) && !indexHtml.includes(`"@type":"${type}"`)) {
     fail(`index.html: schema ${type} ausente`);
@@ -150,6 +170,15 @@ const requiredFiles = [
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
   "assets/og-carnevele.png",
+  "assets/products/following-dreams/back-black.webp",
+  "assets/products/following-dreams/back-white.webp",
+  "assets/products/dangerous-women/back-black.webp",
+  "assets/products/dangerous-women/back-white.webp",
+  "assets/products/dangerous-women/front-black.webp",
+  "assets/products/dangerous-women/front-white.webp",
+  "assets/products/lucky/front-black.webp",
+  "assets/products/lucky/front-white.webp",
+  "assets/products/growing/front-gray.webp",
   "robots.txt",
   "sitemap.xml",
   "llms.txt",

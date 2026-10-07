@@ -14,7 +14,7 @@
       "name": "Following Dreams Tee",
       "sku": "following-dreams",
       "description": "Camiseta Following Dreams com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
-      "image": "assets/media/df54595dc38c.webp",
+      "image": "assets/products/following-dreams/back-white.webp",
       "price": "199.90",
       "currency": "BRL",
       "availability": "https://schema.org/PreOrder"
@@ -25,7 +25,7 @@
       "name": "Dangerous Women Tee",
       "sku": "dangerous-women",
       "description": "Camiseta Dangerous Women com estampa nas costas. 100% algodão, 240 GSM e mangas amplas.",
-      "image": "assets/media/6648ad16261d.webp",
+      "image": "assets/products/dangerous-women/back-black.webp",
       "price": "199.90",
       "currency": "BRL",
       "availability": "https://schema.org/PreOrder"
