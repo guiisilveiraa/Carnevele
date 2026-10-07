@@ -1,6 +1,6 @@
 # CARNEVELE — gate de lançamento
 
-Estado de 16/09/2026: **NO-GO**. Uma caixa só deve ser marcada com evidência, responsável e data. `GO` exige zero P0 conhecido. Nunca marcar como feito com base apenas em uma tela ou no código local.
+Estado de 06/10/2026: **NO-GO**. Uma caixa só deve ser marcada com evidência, responsável e data. `GO` exige zero P0 conhecido. Nunca marcar como feito com base apenas em uma tela ou no código local.
 
 ## P0 — bloqueia lançamento
 
@@ -42,9 +42,18 @@ Estado de 16/09/2026: **NO-GO**. Uma caixa só deve ser marcada com evidência, 
 - [ ] Imagens, fontes, LCP/CLS/FCP e cache revalidados sem sacrificar segurança.
 - [ ] Auditoria de dependências e versões fixas revisadas sem upgrade massivo.
 
-## Evidência atual (não marca caixas acima)
+## Evidência atual (não substitui validação do deployment)
+
+- Em 06/10/2026 foram aplicadas nove migrations aditivas: catálogo, 28 variantes, snapshots, fila de notificações, Storage, hardening, proteção de modo, AAL2 no banco, tentativas de checkout/reservas e recuperação de claims de e-mail.
+- Testes SQL com rollback confirmaram: usuário comum não vê pedidos/endereços alheios; funções de trigger não são executáveis; RPC admin nega usuário comum e aceita admin; produto/variante/tamanho/quantidade inválidos são bloqueados; valor/moeda divergentes são rejeitados; aprovação duplicada incrementa `preorder_sold` exatamente uma vez e cria dois eventos exatamente uma vez.
+- Testes AAL1/AAL2 com rollback confirmaram que AAL1 não lê catálogo inativo nem executa `admin_set_order_status`; AAL2 acessa o catálogo administrativo e chega à validação normal da RPC.
+- Testes transacionais de checkout confirmaram: repetição do mesmo UUID retorna o mesmo pedido; reserva aumenta uma vez; segunda tentativa ativa do usuário é negada; limites de 10 por produto/20 por carrinho falham sem vazar reserva; RPC legada perdeu EXECUTE de `service_role`.
+- Backend: 22 testes automatizados aprovados; check e audit aprovados. Cobertura inclui JWT, CORS explícito, endereço alheio, preço adulterado, tentativa obrigatória, limites, assinatura/frescura, integração/valor/moeda/external reference, duplicidade, reconciliação protegida, XSS no e-mail e fallback Pushover→Resend.
+- Frontend: build e check aprovados; painel de catálogo, upload seguro, MFA/TOTP e `/admin` implementados; Supabase SDK local fixado; CSP segue em Report-Only até validação em preview.
+- Advisors após as migrations: removidos os alertas de FK sem índice e `auth_rls_initplan`; permanecem apenas avisos intencionais de tabelas fechadas, RPCs autenticadas e Leaked Password Protection desativada.
 
 - `api/health` respondeu 200; checkout sem JWT e webhook sem assinatura responderam 401; origem CORS não permitida não recebeu `Access-Control-Allow-Origin` (16/09/2026).
 - `pnpm check`: 7 páginas e 11 assets técnicos aprovados; avisos de IDs GA4/Clarity vazios. `pnpm audit`: zero vulnerabilidades relatadas no lockfile atual.
-- Supabase: sete tabelas com RLS, mas não há catálogo, bucket Storage, migrations ou branch. Plano Free não garante backup diário automático.
+- Supabase: catálogo, Storage e nove migrations existem no projeto ativo. Não há branch de banco no plano atual; plano Free não garante backup diário automático.
 - Domínio final e `www` não resolveram; Resend conectado não possuía domínio de envio. Vercel/GA4/Clarity/Mercado Pago exigem verificação no painel correto.
+- A varredura Codex Security anterior às correções registrou 2 achados altos e 1 médio; os três receberam patch e teste direcionado. A revisão independente pós-patch não executou por limite de uso da conta e deve ser repetida antes do GO.

@@ -1,20 +1,24 @@
 # CARNEVELE — runbook operacional
 
-Atualizado em 16/09/2026. **Não alterar pagamento, pedido, banco ou produção para “consertar” um sintoma sem registrar evidência, plano e rollback.** Não compartilhar dados pessoais ou credenciais em tickets ou chat. Referências: [mapa operacional](./ADMIN-OPERATIONS.md), [incidentes](./SECURITY-INCIDENT.md), [checklist](./LAUNCH-CHECKLIST.md).
+Atualizado em 06/10/2026. **Não alterar pagamento, pedido, banco ou produção para “consertar” um sintoma sem registrar evidência, plano e rollback.** Não compartilhar dados pessoais ou credenciais em tickets ou chat. Referências: [mapa operacional](./ADMIN-OPERATIONS.md), [incidentes](./SECURITY-INCIDENT.md), [checklist](./LAUNCH-CHECKLIST.md).
 
 ## Venda, pagamento e notificações
 
 **Recebi uma venda; onde vejo?** Acesse o admin somente com conta autorizada. Compare número do pedido, `payment_status` e `status`; se necessário confira a Order e a transação no painel Mercado Pago da integração correta. `paid`/`approved` é evidência local, não substitui conciliação com o provedor em caso de dúvida.
 
-**Cliente diz que pagou, mas aparece `pending` / webhook não chegou.** Anote número/ID do pedido e horário sem publicar PII. Consulte Logs do projeto `carnevele-api` na Vercel, histórico de webhooks no Mercado Pago e a Order oficial. Confirme `external_reference`, ID da Order, valor, moeda e status. O código atual pode responder 200 a uma notificação que atualizou zero linhas se ela chegou antes de gravar o ID da Order; trate como risco de conciliação. Não marque `payment_status` manualmente nem reenvie o webhook em produção sem plano/controle de idempotência. Escale para reconciliação segura em preview.
+**Cliente diz que pagou, mas aparece `pending` / webhook não chegou.** Anote número/ID do pedido, horário e `X-Request-ID` sem publicar PII. Consulte Logs do projeto `carnevele-api`, histórico de webhooks no Mercado Pago e a Order oficial. Confirme `external_reference`, ID da Order, aplicação, valor, moeda e status. Pedido ausente/divergente não recebe confirmação 200 e o Mercado Pago pode repetir; não marque `payment_status` manualmente. O cron protegido consulta a Order oficial antes da mesma RPC transacional. Se a notificação ficou `pending`/`failed`, corrija a causa e repita o evento oficial controladamente: a RPC e as chaves de idempotência impedem o segundo incremento/envio normal.
 
-**E-mail não chegou.** O envio transacional ainda não está implementado no backend atual; verificar primeiro domínio Resend, DNS SPF/DKIM/DMARC, remetente aprovado, API key presente apenas no backend e logs de entrega. Não pedir ao cliente para repetir a compra. Quando implementado, reenvio deve consultar registro idempotente para não duplicar mensagens.
+**E-mail não chegou.** Consulte `order_notifications` pelo pedido/canal sem copiar endereço ou corpo. Verifique domínio Resend, SPF/DKIM/DMARC, `RESEND_FROM_EMAIL`, presença da API key e logs de entrega. O envio usa uma chave idempotente por pedido/evento/canal; não crie manualmente uma segunda mensagem e não peça ao cliente para repetir a compra.
 
-**Push não chegou.** Pushover ainda não está implementado. Após implementação, verificar nome/presença das variáveis apenas no backend, logs sem PII e fallback por e-mail administrativo. Falha de push nunca deve alterar o resultado financeiro.
+**Push não chegou.** Verifique presença de `PUSHOVER_APP_TOKEN` e `PUSHOVER_USER_KEY`, sem revelar valores. Uma falha confirmada cria `admin_email_fallback`; a venda permanece aprovada. Pushover não oferece chave de idempotência do provedor, portanto uma interrupção exatamente entre entrega e confirmação local deve ser conciliada pelos logs antes de retry manual.
 
 ## Catálogo e pré-venda
 
-**Trocar imagem, remover PP, trocar preço, cancelar produto ou colocar estoque.** O painel de catálogo e as tabelas `products`/`product_variants` ainda não existem. Hoje frontend, páginas SEO e backend têm partes do catálogo fixas. **Não edite apenas uma delas nem altere produção diretamente.** Registrar a mudança desejada, preparar modelo/migration em branch de banco isolada, compatibilidade com pedidos antigos, testes de checkout/SEO e rollback. Depois da futura centralização, inativar variantes/produtos com histórico em vez de excluir; snapshots de pedido não devem ser sobrescritos. O limite de pré-venda por produto e o incremento somente após aprovação ainda precisam de implementação transacional.
+**Trocar imagem, remover PP, adicionar GG, trocar preço ou modo de venda.** Use `/admin` → **CATÁLOGO** após autenticação MFA. Edite o produto/variante e salve. Para “remover”, desative; não apague objetos usados em pedidos. Upload aceita somente JPG/JPEG, PNG, WEBP ou AVIF até 5 MB e cria um nome novo, preservando imagens históricas. `preorder_sold` e `stock_reserved` não são editáveis pelo painel. Pedidos antigos continuam usando snapshot de nome, imagem, preço, cor e tamanho.
+
+**Reservas abandonadas.** Checkout pendente reserva capacidade e recebe expiração operacional de 30 minutos. A mesma tentativa é deduplicada, há uma tentativa pendente por usuário e limites de 10 unidades por produto/20 no carrinho. Antes de criar uma nova reserva, o backend reconcilia as vencidas daquele usuário. O cron `/api/reconcile-pending-orders`, autenticado por `CRON_SECRET`, faz reconciliação global diária às 03:00 UTC no agendamento compatível com Hobby. Uma Order vinculada só é atualizada após consulta oficial ao Mercado Pago; status ainda pendente não libera reserva. Pedido local vencido sem Order vinculada é cancelado e liberado. Em plano Pro/Enterprise, avaliar frequência maior com base no limite oficial do plano e no volume real.
+
+**Cron falhou.** Abra Vercel → `carnevele-api` → Cron Jobs e Logs. Confirme apenas a presença de `CRON_SECRET` em Production, sem exibir o valor. Uma chamada sem `Authorization: Bearer ...` deve retornar 401. Não libere reservas por SQL manual: consulte a Order oficial ou reexecute o cron autenticado depois de corrigir a causa.
 
 ## Indisponibilidade e erro
 
@@ -24,7 +28,7 @@ Atualizado em 16/09/2026. **Não alterar pagamento, pedido, banco ou produção 
 
 **Como vejo logs?** Vercel → projeto `carnevele-api` → Logs para checkout/webhook; Supabase → Logs e Advisors; Mercado Pago → aplicação → Webhooks/eventos. Confirmar projeto e ambiente antes de concluir que um evento não ocorreu.
 
-**Como faço rollback?** Registrar antes de publicar commit frontend/backend, deployment Vercel estável, migration e exportação do banco. Para frontend/backend, promover deployment anterior verificado. Para migration, usar script reversível validado em branch de banco; rollback de esquema não recupera dados excluídos. Não restaurar produção sem avaliar pedidos criados depois do backup. No plano Free do Supabase, não presumir backup diário automático.
+**Como faço rollback?** Registrar antes de publicar commit frontend/backend, deployment Vercel estável, migration e exportação do banco. Para frontend/backend, promover deployment anterior verificado. Os scripts versionados em `carnevele-api/supabase/rollback` restauram policies/grants/funções sem apagar catálogo ou pedidos; o rollback do checkout deve ser coordenado com o deploy da API anterior. Não restaurar produção sem avaliar pedidos criados depois do backup. No plano Free do Supabase, não presumir backup diário automático.
 
 ## Segurança imediata
 

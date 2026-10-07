@@ -1,5 +1,7 @@
 # CARNEVELE — resposta a incidentes
 
+Atualizado em 06/10/2026.
+
 Este é um procedimento operacional, não um local para armazenar segredos. Não incluir PII, dumps, URLs de recuperação, cookies de sessão ou valores de env vars em chats, commits, logs ou screenshots públicos.
 
 ## Primeiros passos
@@ -23,6 +25,14 @@ Este é um procedimento operacional, não um local para armazenar segredos. Não
 | Webhook secret exposto | Rotacionar no Mercado Pago e backend de forma coordenada para não perder eventos. Revisar notificações e transições desde a exposição, reconciliar com a API oficial e não confiar no payload recebido. |
 | Resend API key exposta | Revogar/rotacionar na conta Resend, atualizar backend, revisar envios/domínios/logs e possíveis mensagens fraudulentas. |
 | Pushover token/user key expostos | Revogar/rotacionar no Pushover, atualizar backend e revisar notificações enviadas. |
+| Catálogo adulterado / stored XSS | Desativar produto/variante afetado sem apagar histórico, preservar valores e logs, revisar conta admin/MFA e Storage. Campos do catálogo devem continuar escapados no storefront e no e-mail; não reutilizar SVG ou URL insegura. |
+| Contador/reserva divergente | Pausar checkout do produto, conciliar pedidos e pagamentos oficiais, comparar `preorder_sold`, `preorder_reserved`, itens e eventos. Não corrigir contador à mão sem lista de pedidos, aprovação e migration auditável. |
+| Reservas pendentes em massa | Suspender temporariamente novos checkouts se a capacidade estiver indisponível, preservar request/order IDs, verificar tentativas por usuário e executar a reconciliação autenticada. Nunca liberar Order vinculada apenas pelo relógio; confirmar status na API oficial do Mercado Pago. Revisar abuso de criação de contas sem executar flood. |
+| Notificação duplicada/ausente | Verificar `order_notifications`, idempotency key e logs de Resend/Pushover. Não alterar o pagamento. Em ambiguidade de Pushover, prefira conciliar a repetir o push; o fallback por e-mail é canal separado. |
+
+## Evidência e correlação
+
+Checkout, webhook e reconciliação emitem `X-Request-ID` e registram apenas IDs operacionais, status, canal, contagens e código HTTP. Nunca adicionar ao log `Authorization`, JWT, service role, `CRON_SECRET`, tokens de Mercado Pago/Resend/Pushover, senha, cartão ou endereço. Preserve os IDs de correlação com o horário UTC e o deployment/commit analisado.
 
 ## Critérios para reabrir
 

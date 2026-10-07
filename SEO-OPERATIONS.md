@@ -1,6 +1,6 @@
 # CARNEVELE — SEO, indexação, analytics e operação
 
-Data da revisão técnica: 15 de setembro de 2026.
+Data da revisão técnica: 6 de outubro de 2026.
 
 ## Estado encontrado antes das alterações
 
@@ -52,7 +52,7 @@ O evento `purchase` usa o número do pedido como `transaction_id`, mantém uma l
 ### Desempenho
 
 - Assets base64 foram extraídos para arquivos cacheáveis e deduplicados.
-- O bundle Supabase foi externalizado para `assets/vendor/supabase-2.116.0.js`.
+- O bundle Supabase foi fixado em `@supabase/supabase-js@2.116.0`, copiado e verificado no build como `assets/vendor/supabase-2.116.0.js`; o admin não carrega mais a versão flutuante do jsDelivr.
 - O `index.html` passou de aproximadamente 4.925.105 para 152.028 bytes, redução de 96,9% no documento inicial.
 - Imagens não críticas permanecem lazy; hero e primeiro produto mantêm prioridade apropriada.
 - Vídeo de entrada usa poster, dimensões reservadas e `preload=metadata`. O arquivo foi verificado e não possui faixa de áudio; por isso é tratado como mídia decorativa para acessibilidade.
