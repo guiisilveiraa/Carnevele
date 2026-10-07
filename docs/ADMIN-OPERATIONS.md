@@ -6,14 +6,14 @@ Estado verificado em 06/10/2026. Este documento não contém credenciais. A loja
 
 | Área | Link | Situação / uso |
 | --- | --- | --- |
-| Site final | https://carnevele.com.br | DNS não resolvia na verificação de 16/09/2026. |
+| Site final | https://carnevele.com.br | Domínio raiz e `www` ainda não resolviam na verificação de 06/10/2026. |
 | Admin final desejado | https://carnevele.com.br/admin | Rewrite e painel de pedidos/catálogo/MFA implementados na branch; falta validar no preview e publicar. |
 | Frontend GitHub | https://github.com/guiisilveiraa/Carnevele | Branch de preparação: `chore/seo-analytics-final`. Não fazer merge sem autorização. |
 | PR de preparação | https://github.com/guiisilveiraa/Carnevele/pull/1 | Revisar antes de qualquer publicação. |
 | Backend GitHub | https://github.com/guiisilveiraa/carnevele-api | Checkout e webhook em produção; alterações exigem preview e aprovação. |
 | Equipe Vercel | https://vercel.com/carnevele | O conector listou `carnevelefront` e `carnevele-api`, mas a inspeção detalhada retornou 403 por escopo; confirmar no painel da equipe. |
 | Supabase | https://supabase.com/dashboard/project/bbrdcgjkxkdsrrvmcfal | Projeto “Carnevele Project”, ativo em `sa-east-1`. |
-| API | https://carnevele-api.vercel.app | `api/health` respondeu 200 em 16/09/2026; não comprova dependências. |
+| API | https://carnevele-api.vercel.app | `api/health` respondeu 200 em 06/10/2026; Production continua no código anterior e não possui a nova rota de cron. |
 | Mercado Pago | https://www.mercadopago.com.br/developers/panel | Conferir a aplicação CARNEVELE, credenciais, webhooks e histórico de eventos no painel da conta. |
 | Resend | https://resend.com/domains | Na conta conectada não havia domínio de envio em 16/09/2026. |
 | Pushover | https://pushover.net/ | Conta/aplicação não verificadas. |

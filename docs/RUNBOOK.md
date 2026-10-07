@@ -22,7 +22,7 @@ Atualizado em 06/10/2026. **Não alterar pagamento, pedido, banco ou produção 
 
 ## Indisponibilidade e erro
 
-**Site fora do ar.** Conferir DNS e HTTPS do domínio, projeto frontend na Vercel, deployment em Production e status da Vercel. Em 16/09/2026 o domínio final e `www` não resolviam; a loja antiga no GitHub Pages respondia 200. Não desligar a loja antiga antes de verificar o novo endereço e redirecionamento.
+**Site fora do ar.** Conferir DNS e HTTPS do domínio, projeto frontend na Vercel, deployment em Production e status da Vercel. Em 06/10/2026 o domínio final e `www` ainda não resolviam. Não desligar a loja antiga antes de verificar o novo endereço e redirecionamento.
 
 **Backend devolve 500 / checkout falha.** Conferir `api/health` (apenas processo, não dependências), logs Vercel, falhas de Supabase e Mercado Pago por request ID/horário. Não registrar `Authorization`, token MP, service role, endereço ou resposta completa de terceiro. Verificar presença e escopo das env vars sem revelar valores. Se falha iniciou após deploy, avaliar promover deployment anterior com rollback documentado.
 
