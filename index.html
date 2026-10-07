@@ -2943,7 +2943,7 @@ footer {
   <script>
 "use strict";
 /* Catalog: keep IDs aligned with the existing checkout API. */
-const products = [
+let products = [
   {
     id: "boat",
     slug: "following-dreams",
@@ -3106,6 +3106,22 @@ function updateSeoForRoute(product = null) {
 }
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+const escapeStoreHtml = (value) => String(value ?? "").replace(
+  /[&<>'"]/g,
+  (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character],
+);
+function safeCatalogImageUrl(value) {
+  const raw = String(value || "").trim();
+  if (/^(\.\/|\/)/.test(raw)) return raw;
+  try {
+    const url = new URL(raw, location.href);
+    return url.protocol === "https:" && (url.origin === location.origin || url.hostname === "bbrdcgjkxkdsrrvmcfal.supabase.co")
+      ? url.href
+      : "./assets/og-carnevele.png";
+  } catch {
+    return "./assets/og-carnevele.png";
+  }
+}
 const money = (n) =>
   Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -3116,7 +3132,7 @@ try {
     .filter(
       (i) =>
         products.some((p) => p.id === i.id && Object.hasOwn(p.images, i.color)) &&
-        ["PP", "P", "M", "G"].includes(i.size) &&
+        /^[A-Z0-9-]{1,40}$/.test(String(i.size || "")) &&
         Number.isInteger(i.quantity) &&
         i.quantity > 0 &&
         i.quantity <= 10,
@@ -3315,7 +3331,7 @@ function navigate(hash, update = true) {
   };
   hash = aliases[hash] || hash || "#home";
   if (update && location.hash !== hash) history.pushState({}, "", hash);
-  const route = hash.match(/^#product\/([a-z]+)\/([a-z]+)$/);
+  const route = hash.match(/^#product\/([a-z0-9-]+)\/([a-z0-9-]+)$/);
   const match = route && products.some((p) => p.id === route[1] && Object.hasOwn(p.images, route[2])) ? route : null;
   $("#home").hidden = !!match;
   $("#productView").hidden = !match;
@@ -3438,6 +3454,16 @@ window.addEventListener("scroll", updateHeader, { passive: true });
 /* Product gallery is a list, ready for additional correctly attributed photos. */
 function renderProduct() {
   const p = products[selected.index];
+  if (!p) return;
+  const colors = Object.keys(p.images || {});
+  if (!colors.includes(selected.color)) selected.color = colors[0];
+  const sizes = [...new Set(
+    (p.variants || [])
+      .filter((variant) => variant.active && variant.color === selected.color)
+      .map((variant) => variant.size),
+  )];
+  if (!sizes.length && !p.variants) sizes.push("PP", "P", "M", "G");
+  if (selected.size && !sizes.includes(selected.size)) selected.size = null;
   updateSeoForRoute(p);
   $("#productName").textContent = p.name;
   $("#productDescription").textContent = p.description;
@@ -3446,25 +3472,40 @@ function renderProduct() {
   $("#colorName").textContent = selected.color.toUpperCase();
   const shots = [
     {
-      src: p.images[selected.color],
+      src: safeCatalogImageUrl(p.images[selected.color]),
       alt: `${p.name} ${selected.color}, estampa nas costas`,
       label: `ESTAMPA NAS COSTAS / ${selected.color.toUpperCase()}`,
     },
-    ...p.gallery.filter((s) => s.color === selected.color),
+    ...(p.gallery || []).filter((s) => s.color === selected.color),
   ];
   $("#productGallery").innerHTML = shots
     .map(
       (s, i) =>
-        `<figure><img src="${s.src}" alt="${s.alt}" width="900" height="1062" ${i ? 'loading="lazy"' : ""} decoding="async" class="${i && !s.productShot ? "campaign-shot" : ""}"><figcaption><span>${s.label}</span><span>0${i + 1} / 0${shots.length}</span></figcaption></figure>`,
+        `<figure><img src="${escapeStoreHtml(safeCatalogImageUrl(s.src))}" alt="${escapeStoreHtml(s.alt)}" width="900" height="1062" ${i ? 'loading="lazy"' : ""} decoding="async" class="${i && !s.productShot ? "campaign-shot" : ""}"><figcaption><span>${escapeStoreHtml(s.label)}</span><span>0${i + 1} / 0${shots.length}</span></figcaption></figure>`,
     )
     .join("");
-  $$("[data-color]").forEach((b) => {
-    b.hidden = !Object.hasOwn(p.images, b.dataset.color);
-    b.setAttribute("aria-pressed", String(b.dataset.color === selected.color));
+  const swatches = { white: "#fff", black: "#111", gray: "#aaa", blue: "#344d8f", red: "#934139", green: "#47614f", yellow: "#d6b84f" };
+  $("#productView .colors").innerHTML = colors.map((color) =>
+    `<button data-color="${escapeStoreHtml(color)}" aria-label="${escapeStoreHtml(color.toUpperCase())}" aria-pressed="${color === selected.color}"><i style="background:${swatches[color] || "#777"}"></i> ${escapeStoreHtml(color.toUpperCase())}</button>`,
+  ).join("");
+  $("#productView .sizes").innerHTML = sizes.map((size) =>
+    `<button data-size="${escapeStoreHtml(size)}" aria-pressed="${size === selected.size}">${escapeStoreHtml(size)}</button>`,
+  ).join("");
+  $$("#productView [data-color]").forEach((button) => {
+    button.onclick = () => {
+      selected.color = button.dataset.color;
+      selected.size = null;
+      history.replaceState({}, "", `#product/${p.id}/${selected.color}`);
+      renderProduct();
+    };
   });
-  $$("[data-size]").forEach((b) =>
-    b.setAttribute("aria-pressed", String(b.dataset.size === selected.size)),
-  );
+  $$("#productView [data-size]").forEach((button) => {
+    button.onclick = () => {
+      selected.size = button.dataset.size;
+      $$("#productView [data-size]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      $("#productStatus").textContent = "";
+    };
+  });
   $("#productStatus").textContent = "";
   window.carneveleAnalytics?.event("view_item", {
     currency: "BRL",
@@ -3473,36 +3514,19 @@ function renderProduct() {
   });
   window.carneveleAnalytics?.pageView();
 }
-$$("[data-color]").forEach(
-  (b) =>
-    (b.onclick = () => {
-      if (!Object.hasOwn(products[selected.index].images, b.dataset.color)) return;
-      selected.color = b.dataset.color;
-      history.replaceState(
-        {},
-        "",
-        `#product/${products[selected.index].id}/${selected.color}`,
-      );
-      renderProduct();
-    }),
-);
-$$("[data-size]").forEach(
-  (b) =>
-    (b.onclick = () => {
-      selected.size = b.dataset.size;
-      $$("[data-size]").forEach((x) =>
-        x.setAttribute("aria-pressed", String(x === b)),
-      );
-      $("#productStatus").textContent = "";
-    }),
-);
+// Product option handlers are attached by renderProduct after catalog hydration.
 $("#addToBag").onclick = () => {
   if (!selected.size) {
     $("#productStatus").textContent = "Selecione seu tamanho.";
-    $$("[data-size]")[0].focus();
+    $$("#productView [data-size]")[0]?.focus();
     return;
   }
-  const p = products[selected.index],
+  const p = products[selected.index];
+  if (p.variants && !p.variants.some((variant) => variant.active && variant.color === selected.color && variant.size === selected.size)) {
+    $("#productStatus").textContent = "Esta variante não está disponível.";
+    return;
+  }
+  const
     existing = cart.find(
       (i) =>
         i.id === p.id && i.color === selected.color && i.size === selected.size,
@@ -3561,7 +3585,7 @@ function renderCart() {
       '<div class="empty-bag"><p>Sua história<br>começa aqui.</p><a class="line-link" href="#collection">EXPLORAR FIRST INTENTIONS ↗</a></div>';
     return;
   }
-  body.innerHTML = `<div class="cart-items">${cart.map((p, i) => `<article class="cart-item"><a href="#product/${p.id}/${p.color}" aria-label="Ver ${p.name}"><img src="${p.images[p.color]}" alt="${p.name} ${p.color}" width="100" height="125"></a><div><h3>${p.name}</h3><p>${p.color.toUpperCase()} / ${p.size}</p><p>${money(p.price * p.quantity)}</p><div class="quantity"><button data-qty="${i}" data-delta="-1" aria-label="Diminuir quantidade de ${p.name}">−</button><span aria-label="Quantidade">${p.quantity}</span><button data-qty="${i}" data-delta="1" aria-label="Aumentar quantidade de ${p.name}" ${p.quantity >= 10 ? "disabled" : ""}>+</button><button class="remove" data-remove="${i}" aria-label="Remover ${p.name}">REMOVER</button></div></div></article>`).join("")}</div><div class="cart-total"><span>SUBTOTAL</span><strong>${money(cart.reduce((sum, p) => sum + p.price * p.quantity, 0))}</strong></div><button class="primary-button" id="checkoutBtn">GO TO CHECKOUT <span>↗</span></button><p class="checkout-note">Envio calculado no checkout.</p>`;
+  body.innerHTML = `<div class="cart-items">${cart.map((p, i) => `<article class="cart-item"><a href="#product/${escapeStoreHtml(p.id)}/${escapeStoreHtml(p.color)}" aria-label="Ver ${escapeStoreHtml(p.name)}"><img src="${escapeStoreHtml(safeCatalogImageUrl(p.images[p.color]))}" alt="${escapeStoreHtml(`${p.name} ${p.color}`)}" width="100" height="125"></a><div><h3>${escapeStoreHtml(p.name)}</h3><p>${escapeStoreHtml(p.color.toUpperCase())} / ${escapeStoreHtml(p.size)}</p><p>${escapeStoreHtml(money(p.price * p.quantity))}</p><div class="quantity"><button data-qty="${i}" data-delta="-1" aria-label="Diminuir quantidade de ${escapeStoreHtml(p.name)}">−</button><span aria-label="Quantidade">${p.quantity}</span><button data-qty="${i}" data-delta="1" aria-label="Aumentar quantidade de ${escapeStoreHtml(p.name)}" ${p.quantity >= 10 ? "disabled" : ""}>+</button><button class="remove" data-remove="${i}" aria-label="Remover ${escapeStoreHtml(p.name)}">REMOVER</button></div></div></article>`).join("")}</div><div class="cart-total"><span>SUBTOTAL</span><strong>${escapeStoreHtml(money(cart.reduce((sum, p) => sum + p.price * p.quantity, 0)))}</strong></div><button class="primary-button" id="checkoutBtn">GO TO CHECKOUT <span>↗</span></button><p class="checkout-note">Envio calculado no checkout.</p>`;
   $("#checkoutBtn").onclick = () => startCheckout();
 }
 $("#cartBody").addEventListener("click", (e) => {
@@ -3606,7 +3630,7 @@ function renderSearch(query = "") {
     ? matches
         .map(
           (p) =>
-            `<a class="search-result" href="#product/${p.id}/${p.color}"><img src="${p.images[p.color]}" alt="${p.name}" width="90" height="112"><span><strong>${p.name}</strong><small>${money(p.price)}</small></span><span>↗</span></a>`,
+            `<a class="search-result" href="#product/${escapeStoreHtml(p.id)}/${escapeStoreHtml(p.color)}"><img src="${escapeStoreHtml(safeCatalogImageUrl(p.images[p.color]))}" alt="${escapeStoreHtml(p.name)}" width="90" height="112"><span><strong>${escapeStoreHtml(p.name)}</strong><small>${escapeStoreHtml(money(p.price))}</small></span><span>↗</span></a>`,
         )
         .join("")
     : '<p class="search-empty">Nenhuma peça encontrada. Tente “Following”, “Dangerous”, “Lucky”, “Growing” ou “First Intentions”.</p>';
@@ -3701,6 +3725,25 @@ function showPaymentReturnStatus() {
 
 let purchaseVerificationPromise = null;
 const PURCHASE_EVENTS_KEY = "carnevele-purchase-events-v1";
+const CHECKOUT_ATTEMPT_KEY = "carnevele-checkout-attempt-v1";
+
+function checkoutAttemptId(addressId, items) {
+  const fingerprint = JSON.stringify({
+    addressId,
+    items: [...items].sort((a, b) =>
+      `${a.productId}|${a.color}|${a.size}`.localeCompare(`${b.productId}|${b.color}|${b.size}`),
+    ),
+  });
+  try {
+    const previous = JSON.parse(sessionStorage.getItem(CHECKOUT_ATTEMPT_KEY) || "null");
+    if (previous?.fingerprint === fingerprint && previous?.id) return previous.id;
+  } catch {
+    // A fresh identifier is safer than trusting malformed browser storage.
+  }
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(CHECKOUT_ATTEMPT_KEY, JSON.stringify({ id, fingerprint }));
+  return id;
+}
 
 function trackedPurchaseIds() {
   try {
@@ -3775,6 +3818,7 @@ async function confirmPaidPurchaseForAnalytics() {
         try {
           localStorage.setItem(PURCHASE_EVENTS_KEY, JSON.stringify(ids));
           sessionStorage.removeItem("carnevele_last_order");
+          sessionStorage.removeItem(CHECKOUT_ATTEMPT_KEY);
         } catch {
           // GA4 also uses transaction_id for purchase de-duplication.
         }
@@ -3793,6 +3837,7 @@ window.addEventListener("carnevele:analytics-ready", () => {
 
 async function startCheckout() {
   const btn = document.getElementById("checkoutBtn");
+  let receivedCheckoutResponse = false;
 
   try {
     if (!cart || !cart.length) {
@@ -3884,6 +3929,7 @@ async function startCheckout() {
         quantity: Number(item.quantity || 1)
       };
     });
+    const attemptId = checkoutAttemptId(addressId, items);
 
     // 4. Chama nosso backend na Vercel
     const response = await fetch(
@@ -3898,15 +3944,17 @@ async function startCheckout() {
 
         body: JSON.stringify({
           addressId,
-          items
+          items,
+          checkoutAttemptId: attemptId
         })
       }
     );
+    receivedCheckoutResponse = true;
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("CHECKOUT ERROR:", data);
+      sessionStorage.removeItem(CHECKOUT_ATTEMPT_KEY);
 
       throw new Error(
         data.error || "Não foi possível iniciar o pagamento."
@@ -3933,7 +3981,7 @@ async function startCheckout() {
     window.location.href = data.checkoutUrl;
 
   } catch (err) {
-    console.error(err);
+    if (receivedCheckoutResponse) sessionStorage.removeItem(CHECKOUT_ATTEMPT_KEY);
 
     paymentNotice(
       err.message ||
@@ -3973,6 +4021,80 @@ function requireStoreClient() {
     );
   return supabaseClient;
 }
+
+async function hydrateCatalogFromSupabase() {
+  if (!supabaseClient) return;
+  const [{ data: catalog, error: productError }, { data: catalogVariants, error: variantError }] = await Promise.all([
+    supabaseClient.from("products").select("id,slug,name,description,price,currency,sales_mode,preorder_limit,preorder_sold,primary_image_url,active").eq("active", true).order("created_at"),
+    supabaseClient.from("product_variants").select("id,product_id,sku,color,size,image_url,active,stock,sort_order").eq("active", true).order("sort_order"),
+  ]);
+  if (productError || variantError || !catalog?.length) return;
+
+  const legacy = [...products];
+  const aliases = { "following-dreams": "boat", "dangerous-women": "women" };
+  const hydrated = catalog.map((row) => {
+    const id = aliases[row.id] || row.id;
+    const fallback = legacy.find((item) => item.id === id);
+    const ownVariants = (catalogVariants || [])
+      .filter((variant) => variant.product_id === row.id)
+      .map((variant) => ({
+        ...variant,
+        color: String(variant.color).toLowerCase(),
+        size: String(variant.size).toUpperCase(),
+      }));
+    const images = {};
+    for (const variant of ownVariants) {
+      if (!images[variant.color]) images[variant.color] = safeCatalogImageUrl(variant.image_url || row.primary_image_url);
+    }
+    const colors = Object.keys(images);
+    if (!colors.length && row.primary_image_url) images.default = safeCatalogImageUrl(row.primary_image_url);
+    const preferredColor = colors.includes(fallback?.color) ? fallback.color : (colors[0] || "default");
+    return {
+      id,
+      productId: row.id,
+      slug: row.slug,
+      name: row.name,
+      description: row.description,
+      price: Number(row.price),
+      currency: row.currency,
+      salesMode: row.sales_mode,
+      preorderLimit: row.preorder_limit,
+      preorderSold: row.preorder_sold,
+      color: preferredColor,
+      images,
+      variants: ownVariants,
+      gallery: fallback?.gallery || [],
+      keywords: fallback?.keywords || [],
+    };
+  }).filter((product) => Object.keys(product.images).length && product.variants.length);
+  if (!hydrated.length) return;
+  products = hydrated;
+
+  rail.innerHTML = products.flatMap((product, productIndex) => Object.keys(product.images).map((color) =>
+    `<article class="product-card card-${productIndex + 1}"><a href="#product/${escapeStoreHtml(product.id)}/${escapeStoreHtml(color)}" class="product-link" aria-label="${escapeStoreHtml(`${product.name} ${money(product.price)} ${color.toUpperCase()}`)}"><div class="product-media"><img src="${escapeStoreHtml(safeCatalogImageUrl(product.images[color]))}" alt="${escapeStoreHtml(`${product.name} ${color}, estampa nas costas`)}" width="900" height="900" loading="lazy" decoding="async"></div><div class="product-meta"><h3>${escapeStoreHtml(product.name)}</h3><span>${escapeStoreHtml(money(product.price))}</span><small>${escapeStoreHtml(color.toUpperCase())}</small></div></a></article>`,
+  )).join("");
+  const cards = rail.querySelectorAll(".product-card").length;
+  $("#railStatus").textContent = `01 / ${String(cards).padStart(2, "0")}`;
+
+  cart = cart.map((saved) => {
+    const product = products.find((item) => item.id === saved.id);
+    const available = product?.variants.some((variant) => variant.active && variant.color === saved.color && variant.size === saved.size);
+    return available ? { ...product, color: saved.color, size: saved.size, quantity: saved.quantity } : null;
+  }).filter(Boolean);
+  renderCart();
+  renderSearch($("#searchInput").value);
+
+  const route = location.hash.match(/^#product\/([a-z0-9-]+)\/([a-z0-9-]+)$/);
+  if (route) {
+    const index = products.findIndex((product) => product.id === route[1] && Object.hasOwn(product.images, route[2]));
+    if (index >= 0) {
+      selected = { index, color: route[2], size: null };
+      if (!$("#productView").hidden) renderProduct();
+    }
+  }
+}
+
+hydrateCatalogFromSupabase();
 
 let accountUser = null;
 let accountAddresses = [];

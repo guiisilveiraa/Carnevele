@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-seo-pages.mjs",
+    "build": "node scripts/vendor-dependencies.mjs && node scripts/generate-seo-pages.mjs",
     "build:brand": "node scripts/build-brand-assets.cjs",
-    "check": "node scripts/check-seo.mjs",
+    "check": "node scripts/vendor-dependencies.mjs --check && node scripts/check-seo.mjs && node scripts/check-inline-js.mjs",
     "serve": "node scripts/serve.mjs"
   },
   "engines": {
@@ -14,5 +14,8 @@
   },
   "devDependencies": {
     "sharp": "0.35.4"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.116.0"
   }
 }

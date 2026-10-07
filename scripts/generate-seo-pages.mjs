@@ -208,7 +208,14 @@ const indexPath = path.join(root, "index.html");
 let indexHtml = await readFile(indexPath, "utf8");
 const previousSiteUrl = indexHtml.match(/const SITE_URL = "([^"]+)";/)?.[1];
 if (!previousSiteUrl) throw new Error("index.html does not expose SITE_URL for canonical synchronization");
-if (previousSiteUrl !== siteUrl) indexHtml = indexHtml.replaceAll(previousSiteUrl, siteUrl);
+if (previousSiteUrl !== siteUrl) {
+  // Authentication redirects are configured separately from public SEO URLs.
+  const accountRedirect = indexHtml.match(/const accountRedirectUrl = \(\) => "[^"]+";/)?.[0];
+  indexHtml = indexHtml.replaceAll(previousSiteUrl, siteUrl);
+  if (accountRedirect) {
+    indexHtml = indexHtml.replace(/const accountRedirectUrl = \(\) => "[^"]+";/, accountRedirect);
+  }
+}
 indexHtml = indexHtml
   .replace(
     /(<meta\s+name="carnevele-ga4-id"\s+content=")[^"]*("\s*\/?>)/,
